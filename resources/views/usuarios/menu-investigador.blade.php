@@ -16,20 +16,20 @@
                                 @endif
                                 <div class="col-sm-12 col-md-auto m-1">
                                     <a href="{{ route('datos_generales') }}"
-                                        class="w-100 text-decoration-none btn read_more_btn ">Datos Generales</a>
+                                        class="w-100 text-decoration-none btn btn-primary ">Datos Generales</a>
                                 </div>
 
                                 @if (isset(Auth::user()->datos) && isset(Auth::user()->proyecto))
                                     <div class="col-sm-12 col-md-auto m-1">
                                         <a href="{{ route('proyectos.index') }}"
-                                            class="w-100 text-decoration-none btn read_more_btn ">Ver mis
+                                            class="w-100 text-decoration-none btn btn-primary ">Ver mis
                                             proyectos</a>
                                     </div>
                                 @endif
                                 @if (isset(Auth::user()->datos) && isset($ciclo->anio))
                                     <div class="col-sm-12 col-md-auto m-1">
                                         <a href="{{ route('proyectos.create') }}"
-                                            class="w-100 text-decoration-none btn read_more_btn ">
+                                            class="w-100 text-decoration-none btn btn-primary ">
                                             Registrar Proyecto
                                         </a>
                                     </div>
@@ -46,8 +46,8 @@
                                     @endif
                                 @endif
                                     <p class="text-muted m-0 mt-2 pt-2 border-top fw-bold">* Recuerda siempre tener tus datos generales actualizados.</p>
-                                    
-                                
+
+
                             </div>
                         </div>
                     </div>

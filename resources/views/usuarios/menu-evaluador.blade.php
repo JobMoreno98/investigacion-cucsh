@@ -15,7 +15,7 @@
                                     </div>
                                 @endif
                                 <div class="col-sm-12 col-md-auto m-1">
-                                    <a href="{{route('evaluador-proyectos',Auth::user()->id)}}" class="w-100 text-decoration-none btn read_more_btn ">Ver
+                                    <a href="{{route('evaluador-proyectos',Auth::user()->id)}}" class="w-100 text-decoration-none btn btn-primary ">Ver
                                         proyectos a evaluar</a>
                                 </div>
                             </div>

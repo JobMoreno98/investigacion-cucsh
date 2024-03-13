@@ -11,30 +11,30 @@
                             <div class="row justify-content-center">
                                 <div class="col-sm-12 col-md-auto m-1">
                                     <a href="{{ route('proyectos_all') }}"
-                                        class="w-100 text-decoration-none btn read_more_btn ">Ver todos los
+                                        class="w-100 text-decoration-none btn  btn-primary">Ver todos los
                                         proyectos</a>
                                 </div>
                                 <div class="col-sm-12 col-md-auto m-1">
                                     <a href="{{ route('proyectos.estadisticas') }}"
-                                        class="w-100 text-decoration-none btn read_more_btn ">Ver
+                                        class="w-100 text-decoration-none btn btn-primary">Ver
                                         estadisticas</a>
                                 </div>
 
                                 <div class="col-sm-12 col-md-auto m-1">
                                     <a href="{{ route('ciclos.index') }}"
-                                        class="w-100 text-decoration-none btn read_more_btn ">Administrar
+                                        class="w-100 text-decoration-none btn btn-primary ">Administrar
                                         ciclos</a>
                                 </div>
                                 <div class="col-sm-12 col-md-auto m-1"><a href="{{ route('usuarios.index') }}"
-                                        class="w-100 btn  text-decoration-none read_more_btn">Administrar usuarios</a>
+                                        class="w-100 btn  text-decoration-none btn-primary">Administrar usuarios</a>
                                 </div>
 
                                 <div class="col-sm-12 col-md-auto m-1"><a href="{{ route('evaluaciones.index') }}"
-                                        class="w-100 btn  text-decoration-none read_more_btn">Asignar proyectos</a>
+                                        class="w-100 btn  text-decoration-none btn-primary">Asignar proyectos</a>
                                 </div>
 
                                 <div class="col-sm-12 col-md-auto m-1"><a href="{{ route('datos.admin') }}"
-                                        class="w-100 btn  text-decoration-none read_more_btn">Datos del usuario</a>
+                                        class="w-100 btn  text-decoration-none btn-primary">Datos del usuario</a>
                                 </div>
                             </div>
                         </div>
