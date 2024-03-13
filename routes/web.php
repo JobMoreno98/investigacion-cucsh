@@ -4,6 +4,7 @@ use App\Http\Controllers\CiclosController;
 use App\Http\Controllers\EvaluacionesController;
 use App\Http\Controllers\ProyectosController;
 use App\Http\Controllers\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*

@@ -6,11 +6,10 @@ use App\Models\ciclos;
 use App\Models\proyectos;
 use App\Models\User;
 use App\Models\evaluaciones;
+use App\Models\Metodologias;
 use App\Models\Recursos;
 use App\Models\RedesInvestigacion;
-use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -59,13 +58,15 @@ class ProyectosController extends Controller
     {
         $user = User::find(Auth::user()->id);
         $ciclo = ciclos::where('activo', 1)->first();
-        $folio = proyectos::select('id')->where('ciclo_id', $ciclo->id)
+        $folio = proyectos::select('id', 'folio')->where('ciclo_id', $ciclo->id)
             ->latest()
             ->first();
-        if (!isset($folio->id)) {
+
+
+        if (!isset($folio->folio)) {
             $id = 0;
         } else {
-            $id = $folio->id;
+            $id = $folio->folio;
         }
         $folio = strval($ciclo->anio) . '/' . strval($id + 1);
         alert()->info('Consideraciones', 'Solo dispones de 30 minutos para el llenado del formulario, después de este tiempo tu sesión caducará ')->persistent(true, false);
@@ -91,6 +92,12 @@ class ProyectosController extends Controller
             'abstract.required' => 'Favor de ingresar el resumen del proyecto',
             'justificacion_recursos.max:2000' => 'La justificaion es demasiado larga',
             'enfoque.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+            'justificacion.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+            'metodologia.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+            'objetivos.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+            'hipotesis.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+            'criterios_eticos.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+            'referencias.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
         ];
 
         $request->validate(
@@ -102,7 +109,12 @@ class ProyectosController extends Controller
                 'abstract' => 'required',
                 'vinculacion_redes.0' => 'required',
                 'justificacion_recursos' => 'max:2000',
-                'enfoque' => 'required',
+                'justificacion' => 'required',
+                'metodologia' => 'required',
+                'objetivos' => 'required',
+                'hipotesis' => 'required',
+                'criterios_eticos' => 'required',
+                'referencias' => 'required',
             ],
             $messages,
         );
@@ -116,11 +128,12 @@ class ProyectosController extends Controller
         $proyecto->tipo_registro = $request->tipo_registro;
         $proyecto->tipo_proyecto = $request->tipo_proyecto;
         $proyecto->sector = $request->sector;
-
+        $proyecto->folio = explode("/", $request->folio)[1];
         $proyecto->titulo_proyecto = $request->titulo;
         $proyecto->fecha_inicio = $request->fecha_inicio;
         $proyecto->fecha_fin = $request->fecha_fin;
         $proyecto->abstract = $request->abstract;
+        $proyecto->justificacion = $request->justificacion;
         $proyecto->enfoque = $request->enfoque;
 
         if (count($request->personal) > 0) {
@@ -136,10 +149,14 @@ class ProyectosController extends Controller
 
         if (strcmp($request->otras_intituciones[0], 'Si') == 0 && isset($request->otras_intituciones[1])) {
             $proyecto->otras_instituciones = $request->otras_intituciones[1];
+        } else {
+            $proyecto->otras_instituciones = 'No aplica';
         }
 
         if (strcmp($request->vinculacion_cuerpos[0], 'Si') == 0 && isset($request->vinculacion_cuerpos[1])) {
             $proyecto->vinculacion_ca = $request->vinculacion_cuerpos[1];
+        } else {
+            $proyecto->otras_instituciones = 'No aplica';
         }
 
         if (strcmp($request->vinculacion_redes[0], 'Si') == 0) {
@@ -182,19 +199,31 @@ class ProyectosController extends Controller
         if (isset($request->justificacion_recursos)) {
             $recurso->justificacion = $request->justificacion_recursos;
         }
-
+        //return $request;
         //return $proyecto;
         $recurso->save();
 
         $proyecto->recursos_id = $recurso->id;
         $proyecto->save();
-        for ($i = 0; $i < count($request->r_nombre); $i++) {
-            RedesInvestigacion::create([
-                'nombre' => $request->r_nombre[$i],
-                'nivel' => $request->r_tipo[$i],
-                'proyecto_id' => $proyecto->id
-            ]);
+        if (isset($request->r_nombre)) {
+            for ($i = 0; $i < count($request->r_nombre); $i++) {
+                RedesInvestigacion::create([
+                    'nombre' => $request->r_nombre[$i],
+                    'nivel' => $request->r_tipo[$i],
+                    'proyecto_id' => $proyecto->id
+                ]);
+            }
         }
+
+        Metodologias::create([
+            'metodologia' =>  $request->metodologia,
+            'objetivos' =>  $request->objetivos,
+            'hipotesis' =>  $request->hipotesis,
+            'criterios_eticos' =>  $request->criterios_eticos,
+            'referencias' =>  $request->referencias,
+            'proyecto_id' => $proyecto->id
+        ]);
+
         Alert::success("Exito", 'El proyecto se registro exitosamente');
         return redirect()
             ->route('home');
@@ -230,7 +259,8 @@ class ProyectosController extends Controller
         $proyecto->personal = explode('<separador>', $proyecto->personal);
         $proyecto->divulgacion = explode('<separador>', $proyecto->divulgacion);
         $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)->where('activo', 1)->get();
-        return view('proyectos.edit', compact('proyecto', 'redes'));
+        $metodologias = Metodologias::where('proyecto_id', $proyecto->id)->first();
+        return view('proyectos.edit', compact('proyecto', 'redes', 'metodologias'));
     }
 
     public function update(Request $request, proyectos $proyecto)
@@ -340,7 +370,7 @@ class ProyectosController extends Controller
         // se desactivan todos los registros que no son validos
         RedesInvestigacion::whereNotIn('id', $redesTemp)->update(['activo' => '0']);
 
-        Alert::success('Exito','El proyecto se modifico exitosamente');
+        Alert::success('Exito', 'El proyecto se modifico exitosamente');
         return redirect()->route('home');
     }
     public function proyecto_definitivo($id)
@@ -352,11 +382,9 @@ class ProyectosController extends Controller
             $proyecto->definitivo = 0;
         }
         $proyecto->update();
+        Alert::success("Exito", 'El proyecto se envio a definitivo correctamente');
         return redirect()
-            ->route('home')
-            ->with([
-                'message' => 'El proyecto se actualizo correctamente',
-            ]);
+            ->route('home');
     }
     public function imprimirProyecto($id)
     {

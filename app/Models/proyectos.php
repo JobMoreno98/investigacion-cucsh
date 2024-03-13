@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class proyectos extends Model
 {
     use HasFactory;
-    protected $appends = ['folio', 'total', 'datosInv', 'dictamen'];
+    protected $appends = ['total', 'datosInv', 'dictamen'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
