@@ -9,6 +9,9 @@ use App\Models\evaluaciones;
 use App\Models\Metodologias;
 use App\Models\Recursos;
 use App\Models\RedesInvestigacion;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\PDF;
+use DragonCode\Support\Facades\Filesystem\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -180,7 +183,7 @@ class ProyectosController extends Controller
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
 
-            \Storage::disk('anexos')->put($nombre, \File::get($archivo));
+            Storage::disk('anexos')->put($nombre, File::get($archivo));
             $proyecto->anexo = $nombre;
         }
 
@@ -188,7 +191,7 @@ class ProyectosController extends Controller
             $archivo = $request->file('cronograma');
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
-            \Storage::disk('cronogramas')->put($nombre, \File::get($archivo));
+            Storage::disk('cronogramas')->put($nombre, File::get($archivo));
             $proyecto->cronograma = $nombre;
         }
         $recurso = new Recursos();
@@ -336,7 +339,7 @@ class ProyectosController extends Controller
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
             $nombre = str_replace(' ', '_', $nombre);
-            \Storage::disk('anexos')->put($nombre, \File::get($archivo));
+            Storage::disk('anexos')->put($nombre, File::get($archivo));
             $proyecto->anexo = $nombre;
         }
 
@@ -345,7 +348,7 @@ class ProyectosController extends Controller
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
             $nombre = str_replace(' ', '_', $nombre);
-            \Storage::disk('cronogramas')->put($nombre, \File::get($archivo));
+            Storage::disk('cronogramas')->put($nombre, File::get($archivo));
             $proyecto->cronograma = $nombre;
         }
 
@@ -400,7 +403,7 @@ class ProyectosController extends Controller
             $total = $total + $proyecto->recursos->$numero;
         }
         $proyecto->monto_total = $total;
-        $pdf = \PDF::loadView('proyectos.imprimirPDF', compact('proyecto'));
+        $pdf = FacadePdf::loadView('proyectos.imprimirPDF', compact('proyecto'));
         return $pdf->stream('formatoProyecto.pdf');
     }
 
@@ -488,7 +491,7 @@ class ProyectosController extends Controller
         $archivo = $request->file('avances');
         $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
         $nombre = str_replace('/', '_', $nombre);
-        \Storage::disk('continuacion')->put($nombre, \File::get($archivo));
+        Storage::disk('continuacion')->put($nombre, File::get($archivo));
 
         $proyecto->avances = $nombre;
         $proyecto->update();
