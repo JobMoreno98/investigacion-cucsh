@@ -7,6 +7,7 @@ use App\Models\proyectos;
 use App\Models\User;
 use App\Models\evaluaciones;
 use App\Models\Recursos;
+use App\Models\RedesInvestigacion;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProyectosController extends Controller
 {
@@ -45,6 +47,7 @@ class ProyectosController extends Controller
                 ->where('ciclo_id', $ciclo->id)
                 ->where('user_id', Auth::user()->id)
                 ->get();
+
             return view('proyectos.index', compact('proyectos'));
         } else {
             return view('home')->with([
@@ -56,7 +59,7 @@ class ProyectosController extends Controller
     {
         $user = User::find(Auth::user()->id);
         $ciclo = ciclos::where('activo', 1)->first();
-        $folio = proyectos::select('id')
+        $folio = proyectos::select('id')->where('ciclo_id', $ciclo->id)
             ->latest()
             ->first();
         if (!isset($folio->id)) {
@@ -65,6 +68,7 @@ class ProyectosController extends Controller
             $id = $folio->id;
         }
         $folio = strval($ciclo->anio) . '/' . strval($id + 1);
+        alert()->info('Consideraciones', 'Solo dispones de 30 minutos para el llenado del formulario, después de este tiempo tu sesión caducará ')->persistent(true, false);
         return view('proyectos.create', compact('user', 'ciclo', 'folio'));
     }
 
@@ -103,6 +107,7 @@ class ProyectosController extends Controller
             $messages,
         );
 
+
         $proyecto = new proyectos();
 
         $proyecto->user_id = Auth::user()->id;
@@ -137,9 +142,22 @@ class ProyectosController extends Controller
             $proyecto->vinculacion_ca = $request->vinculacion_cuerpos[1];
         }
 
-        if (strcmp($request->vinculacion_redes[0], 'Si') == 0 && isset($request->vinculacion_redes[1])) {
-            $proyecto->vinculacion_redes = $request->vinculacion_redes[1];
+        if (strcmp($request->vinculacion_redes[0], 'Si') == 0) {
+            //$proyecto->vinculacion_redes = $request->vinculacion_redes[1];
+
+            $messages = [
+                'r_nombre.required' => 'Favor de ingresar los nombres de las redes de investigación',
+                'r_tipo.required' => 'Favor de ingresar el nivel de las redes de investigación',
+            ];
+            $request->validate(
+                [
+                    'r_nombre' => 'required',
+                    'r_tipo' => 'required',
+                ],
+                $messages,
+            );
         }
+        return $request;
 
         //  -- Archivos  --
         if ($request->hasfile('anexos')) {
@@ -172,7 +190,14 @@ class ProyectosController extends Controller
 
         $proyecto->recursos_id = $recurso->id;
         $proyecto->save();
-
+        for ($i = 0; $i < count($request->r_nombre); $i++) {
+            RedesInvestigacion::create([
+                'nombre' => $request->r_nombre[$i],
+                'nivel' => $request->r_tipo[$i],
+                'proyecto_id' => $proyecto->id
+            ]);
+            # code...
+        }
         return redirect()
             ->route('home')
             ->with([
@@ -337,7 +362,7 @@ class ProyectosController extends Controller
     public function delete($id)
     {
         $proyecto = proyectos::find($id);
-        if ($proyecto->user_id == Auth::user()->id || Auth::user()->role =='admin' || Auth::user()->s_role =='admin') {
+        if ($proyecto->user_id == Auth::user()->id || Auth::user()->role == 'admin' || Auth::user()->s_role == 'admin') {
             $proyecto->activo = 0;
             $proyecto->update();
             return redirect()
@@ -362,14 +387,14 @@ class ProyectosController extends Controller
             ->where('ciclo_id', $ciclo->id)
             ->count();
 
-	$evaluados = evaluaciones::select('dictamen', DB::raw('count(*) as Total_registros'))
+        $evaluados = evaluaciones::select('dictamen', DB::raw('count(*) as Total_registros'))
             ->where('definitivo', 1)
             ->where('ciclo_id', $ciclo->id)
             ->groupBy('dictamen')->orderBy('Total_registros', 'desc')
             ->pluck('Total_registros', 'dictamen');
-	
-	// Aceptados Proyectos nuevos // Aprobados Proyectos continuacion  // No aceptados
-	//dd($evaluados );
+
+        // Aceptados Proyectos nuevos // Aprobados Proyectos continuacion  // No aceptados
+        //dd($evaluados );
 
 
         // Obtener las cantidades de cada uno de los registros
@@ -389,15 +414,15 @@ class ProyectosController extends Controller
             ->where('activo', 1)
             ->where('ciclo_id', $ciclo->id)
             ->groupBy('sector')->orderBy('Total_registros', 'desc')
-            ->pluck('Total_registros', 'sector');    
-       
-         $recursos = proyectos::where('activo', 1)
+            ->pluck('Total_registros', 'sector');
+
+        $recursos = proyectos::where('activo', 1)
             ->where('ciclo_id', $ciclo->id)
             ->get();
 
         //$recursos = $recursos->where('total', '>', 0);
 
-        $apoyo = [ 'Con apoyo' => $recursos->where('total', '>', 0)->count(),'Sin apoyo' => $total - $recursos->where('total', '>', 0)->count() ];
+        $apoyo = ['Con apoyo' => $recursos->where('total', '>', 0)->count(), 'Sin apoyo' => $total - $recursos->where('total', '>', 0)->count()];
         $definitivos = proyectos::select('definitivo')
             ->where('activo', 1)
             ->where('ciclo_id', $ciclo->id)
@@ -410,7 +435,7 @@ class ProyectosController extends Controller
 
         $arreglo = ['Apoyo económico' => $apoyo, 'Tipo registro' => $tipo_registro->all(), 'Tipo proyecto' => $tipo_proyecto, 'Sector' => $sector];
 
-        return view('estadisticas.estadisticas', compact('arreglo', 'total', 'definitivo', 'departamentos','evaluados'));
+        return view('estadisticas.estadisticas', compact('arreglo', 'total', 'definitivo', 'departamentos', 'evaluados'));
     }
 
     public function avances_proyecto(Request $request, proyectos $proyecto)
@@ -454,29 +479,29 @@ class ProyectosController extends Controller
         $columnas = [['target' => 0, 'visible' => false]];
 
         if (strcmp($valor, 'Con apoyo') == 0) {
-            return $this->recursos($proyectos,  $columnas, $titulos,$tipo,$valor);
+            return $this->recursos($proyectos,  $columnas, $titulos, $tipo, $valor);
         }
 
         if (strcmp($valor, 'Sin apoyo') == 0) {
             $proyectos = $proyectos->where('total', '=', 0);
-            $proyectosFin = $this->conFiltro($proyectos,$tipo);
+            $proyectosFin = $this->conFiltro($proyectos, $tipo);
             return view('reportes.recursos', compact('proyectosFin', 'columnas', 'titulos', 'tipo', 'valor'));
         }
-	
-	array_push($titulos,$tipo,'Tipo registro','Total');
-        array_push($columnas,['target' => 6, 'visible' => false],['target' => 7, 'visible' => false],['target' => 8, 'visible' => false]);
+
+        array_push($titulos, $tipo, 'Tipo registro', 'Total');
+        array_push($columnas, ['target' => 6, 'visible' => false], ['target' => 7, 'visible' => false], ['target' => 8, 'visible' => false]);
         $proyectos = $proyectos->where($tipo, $valor);
-        $proyectosFin = $this->conFiltro($proyectos,$tipo);
+        $proyectosFin = $this->conFiltro($proyectos, $tipo);
         return view('reportes.recursos', compact('proyectosFin', 'columnas', 'titulos', 'tipo', 'valor'));
     }
     /**
      * Funciones para reportes
      */
 
-    public function recursos($proyectos, $columnas, $titulos,$tipo,$valor)
+    public function recursos($proyectos, $columnas, $titulos, $tipo, $valor)
     {
         // Se añaden los header a la tabla
-        $temp = ['Total','Tipo registro', '3711', '3721', '3722', '3751', '3753', '2611', '2111', '2141'];
+        $temp = ['Total', 'Tipo registro', '3711', '3721', '3722', '3751', '3753', '2611', '2111', '2141'];
         $titulos = array_merge($titulos, $temp);
         // Se ocultan los campos de los recursos
         for ($i = 7; $i <= 15; $i++) {
@@ -486,21 +511,22 @@ class ProyectosController extends Controller
         $proyectosFin = [];
         $proyectos = $proyectos->where('total', '>', 0);
         foreach ($proyectos as $key => $value) {
-            $data = [$value['id'], $value['folio'], ucfirst($value['titulo_proyecto']), $value['user']['name'], $value['division'], $value['departamento'],$value['total'],$value['tipo_registro']];
+            $data = [$value['id'], $value['folio'], ucfirst($value['titulo_proyecto']), $value['user']['name'], $value['division'], $value['departamento'], $value['total'], $value['tipo_registro']];
             $data_recurso = [$value['recursos']['p_01'], $value['recursos']['p_02'], $value['recursos']['p_03'], $value['recursos']['p_04'], $value['recursos']['p_05'], $value['recursos']['p_06'], $value['recursos']['p_07'], $value['recursos']['p_08']];
             $data = array_merge($data, $data_recurso);
             array_push($proyectosFin, $data);
             $total = $total + $value->total;
         }
-        return view('reportes.recursos', compact('proyectosFin', 'columnas', 'total', 'titulos','tipo','valor'));
+        return view('reportes.recursos', compact('proyectosFin', 'columnas', 'total', 'titulos', 'tipo', 'valor'));
     }
 
-    public function conFiltro($proyectos,$tipo)
+    public function conFiltro($proyectos, $tipo)
     {
         $proyectosFin = [];
 
         foreach ($proyectos as $key => $value) {
-            array_push($proyectosFin, [$value['id'], $value['folio'], $value['titulo_proyecto'], $value['user']['name'], $value['division'], $value['departamento'],$value[$tipo],$value['tipo_registro'],$value['total']]);        }
+            array_push($proyectosFin, [$value['id'], $value['folio'], $value['titulo_proyecto'], $value['user']['name'], $value['division'], $value['departamento'], $value[$tipo], $value['tipo_registro'], $value['total']]);
+        }
 
         return $proyectosFin;
     }

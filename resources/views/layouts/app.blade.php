@@ -23,8 +23,8 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('css/cards.css') }}">
-
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"
         integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
@@ -48,7 +48,7 @@
             height: "200",
             language: 'es_MX',
             menubar: false, // removes the menubar
-            language_url: '../../public/js/es_MX.js'
+            language_url: "{{ asset('js/es_MX.js') }}"
         });
     </script>
     <style>
@@ -63,6 +63,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="preloader">
         <div class="loader">
@@ -85,15 +86,15 @@
         <nav style="background: #072d45" class="navbar navbar-expand-md navbar-dark shadow-sm">
             <div class="container">
                 <span class="me-2 pe-2 border-end border-white">
-                    <a href="http://www.cucsh.udg.mx/" target="_blank"><img src="{{ asset('images/cucshBlanco.png') }}" alt=""
-                        width="75px"></a>
+                    <a href="http://www.cucsh.udg.mx/" target="_blank"><img src="{{ asset('images/cucshBlanco.png') }}"
+                            alt="" width="75px"></a>
                 </span>
-                <span >
+                <span>
                     <a class="navbar-brand" href="{{ url('/') }}">
                         {{ config('app.name', 'Laravel') }}
                     </a>
                 </span>
-                
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -164,6 +165,7 @@
         </div>
     </div>
     <script src="{{ asset('js/main.js') }}"></script>
+    @yield('js')
 </body>
 
 
