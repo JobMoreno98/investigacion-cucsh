@@ -8,60 +8,64 @@ use Illuminate\Database\Eloquent\Model;
 class proyectos extends Model
 {
     use HasFactory;
-    protected $appends = ['folio', 'total','datosInv','dictamen'];
-    public function user() {
+    protected $appends = ['folio', 'total', 'datosInv', 'dictamen'];
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function evaluador() {
+    public function evaluador()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function ciclo() {
+    public function ciclo()
+    {
         return $this->belongsTo(ciclos::class);
     }
 
-    public function recursos() {
+    public function recursos()
+    {
         return $this->belongsTo(Recursos::class);
     }
 
- public function evaluacion() {
+    public function evaluacion()
+    {
         return $this->belongsTo(evaluaciones::class);
     }
-    
- public function getFolioAttribute(){
-        return $this->ciclo->anio . '/' . $this->id;
+    public function redes_investigacion()
+    {
+        return $this->hasMany(RedesInvestigacion::class,'proyecto_id');
     }
 
     public function getTotalAttribute()
     {
         $total = 0;
-        if(isset($this->recursos)){
+        if (isset($this->recursos)) {
             for ($i = 0; $i < 11; $i++) {
                 $numero = 'p_0' . strval($i + 1);
                 $total = $total + $this->recursos->$numero;
             }
         }
-        
+
         return $total;
     }
 
     public function getDatosInvAttribute()
     {
-        if(isset($this->user->datos)){
+        if (isset($this->user->datos)) {
             return $this->user->datos;
-        }else{
+        } else {
             return "";
-        }       
+        }
     }
 
-   public function getDictamenAttribute()
+    public function getDictamenAttribute()
     {
-        if(isset($this->evaluacion->dictamen)){
+        if (isset($this->evaluacion->dictamen)) {
             return $this->evaluacion->dictamen;
-        }else{
+        } else {
             return "";
-        }       
+        }
     }
-
 }

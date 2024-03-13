@@ -8,6 +8,7 @@ use App\Models\proyectos;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class EvaluacionesController extends Controller
 {
@@ -22,9 +23,8 @@ class EvaluacionesController extends Controller
                 ->get();
             return view('evaluaciones.index', compact('proyectos'));
         } else {
-            return view('home')->with([
-                'message' => 'No hay ciclos registrados',
-            ]);
+            Alert::danger('Error', 'No hay ciclos registrados');
+            return view('home');
         }
     }
     public function show($id)
@@ -76,9 +76,8 @@ class EvaluacionesController extends Controller
         $proyecto->evaluacion_id = $evaluacion->id;
         $proyecto->update();
 
-        return redirect()
-            ->route('evaluador-proyectos', $evaluacion->evaluador_id)
-            ->with('message', 'Se guardo correctamente la evaluación');
+        Alert::success('Exito', 'Se guardo correctamente la evaluación');
+        return redirect()->route('evaluador-proyectos', $evaluacion->evaluador_id);
     }
     public function edit($id)
     {
@@ -121,9 +120,9 @@ class EvaluacionesController extends Controller
         } else {
             $evaluacion = $this->continuacion($request, $ciclo);
         }
+        Alert::success('Exito', 'Se guardo correctamente');
         return redirect()
-            ->route('home')
-            ->with('message', 'Se actualizo correctamente');
+            ->route('home');
 
         $evaluacion = evaluaciones::find($id);
 
@@ -154,9 +153,9 @@ class EvaluacionesController extends Controller
 
         $proyecto->evaluacion_id = $evaluacion->id;
         $proyecto->update();
+        Alert::success('Exito', 'Se asigno correctamente el evalaudor');
         return redirect()
-            ->route('home')
-            ->with('message', 'Se asigno correctamente el evalaudor');
+            ->route('home');
     }
 
     public function proyectos_asigandos()
@@ -276,9 +275,9 @@ class EvaluacionesController extends Controller
         $evaluacion = evaluaciones::find($id);
         $evaluacion->definitivo = 1;
         $evaluacion->update();
+        Alert::success('Exito', 'Se guardo correctamente');
         return redirect()
-            ->route('home')
-            ->with('message', 'Se guardo correctamente');
+            ->route('home');
     }
 
     public function imprimirEvaluacion($id)
@@ -304,7 +303,7 @@ class EvaluacionesController extends Controller
 
         $totalAprobado = 0;
         for ($i = 0; $i < 9; $i++) {
-            
+
             $numero = 'p_0' . strval($i);
             $totalAprobado = $totalAprobado + $evaluacion->$numero;
         }
@@ -314,13 +313,13 @@ class EvaluacionesController extends Controller
         return $pdf->stream('formatoProyecto.pdf');
     }
 
-public function resultadosEvaluaciones($tipo){
-$ciclo = ciclos::latest()->first();
+    public function resultadosEvaluaciones($tipo)
+    {
+        $ciclo = ciclos::latest()->first();
 
-$temp = proyectos::with('evaluacion','ciclo')->where('ciclo_id', $ciclo->id)->get();
-$proyectos = $temp->where('dictamen',$tipo);
+        $temp = proyectos::with('evaluacion', 'ciclo')->where('ciclo_id', $ciclo->id)->get();
+        $proyectos = $temp->where('dictamen', $tipo);
 
-return view('reportes.resultados',compact('proyectos','tipo'));
-
-}
+        return view('reportes.resultados', compact('proyectos', 'tipo'));
+    }
 }

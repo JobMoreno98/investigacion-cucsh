@@ -143,7 +143,7 @@ class ProyectosController extends Controller
         }
 
         if (strcmp($request->vinculacion_redes[0], 'Si') == 0) {
-            //$proyecto->vinculacion_redes = $request->vinculacion_redes[1];
+            $proyecto->vinculacion_redes = "Si";
 
             $messages = [
                 'r_nombre.required' => 'Favor de ingresar los nombres de las redes de investigación',
@@ -157,8 +157,6 @@ class ProyectosController extends Controller
                 $messages,
             );
         }
-        return $request;
-
         //  -- Archivos  --
         if ($request->hasfile('anexos')) {
             $archivo = $request->file('anexos');
@@ -196,13 +194,10 @@ class ProyectosController extends Controller
                 'nivel' => $request->r_tipo[$i],
                 'proyecto_id' => $proyecto->id
             ]);
-            # code...
         }
+        Alert::success("Exito", 'El proyecto se registro exitosamente');
         return redirect()
-            ->route('home')
-            ->with([
-                'message' => 'El proyecto se registro exitosamente',
-            ]);
+            ->route('home');
     }
     public function show(proyectos $proyecto)
     {
@@ -223,7 +218,9 @@ class ProyectosController extends Controller
             }
             $proyecto->monto_total = $total;
 
-            return view('proyectos.show', compact('proyecto'));
+            $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)->where('activo', 1)->get();
+
+            return view('proyectos.show', compact('proyecto', 'redes'));
         } else {
             return redirect()->route('home');
         }
@@ -232,7 +229,8 @@ class ProyectosController extends Controller
     {
         $proyecto->personal = explode('<separador>', $proyecto->personal);
         $proyecto->divulgacion = explode('<separador>', $proyecto->divulgacion);
-        return view('proyectos.edit', compact('proyecto'));
+        $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)->where('activo', 1)->get();
+        return view('proyectos.edit', compact('proyecto', 'redes'));
     }
 
     public function update(Request $request, proyectos $proyecto)
@@ -299,15 +297,15 @@ class ProyectosController extends Controller
             $proyecto->vinculacion_ca = $request->vinculacion_cuerpos[1];
         }
 
-        if (strcmp($request->vinculacion_redes[0], 'Si') == 0 && isset($request->vinculacion_redes[1])) {
-            $proyecto->vinculacion_redes = $request->vinculacion_redes[1];
+        if (strcmp($request->vinculacion_redes[0], 'Si') == 0) {
+            $proyecto->vinculacion_redes = "Si";
         }
 
         if ($request->hasfile('anexos')) {
             $archivo = $request->file('anexos');
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
-
+            $nombre = str_replace(' ', '_', $nombre);
             \Storage::disk('anexos')->put($nombre, \File::get($archivo));
             $proyecto->anexo = $nombre;
         }
@@ -316,15 +314,34 @@ class ProyectosController extends Controller
             $archivo = $request->file('cronograma');
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
+            $nombre = str_replace(' ', '_', $nombre);
             \Storage::disk('cronogramas')->put($nombre, \File::get($archivo));
             $proyecto->cronograma = $nombre;
         }
-        $proyecto->save();
-        return redirect()
-            ->route('home')
-            ->with([
-                'message' => 'El proyecto se modifico exitosamente',
-            ]);
+
+        $proyecto->update();
+        //Se genera un arreglo vacio que contendra los registros que se gaurdaron
+        $redesTemp = [];
+        for ($i = 0; $i < count($request->r_nombre); $i++) {
+            // Se añaden los registros que actualmente son validos.
+            array_push(
+                $redesTemp,
+                RedesInvestigacion::updateOrCreate(
+                    ['nombre' => $request->r_nombre[$i], 'proyecto_id' => $proyecto->id],
+                    [
+                        'nombre' => $request->r_nombre[$i],
+                        'nivel' => $request->r_tipo[$i],
+                        'proyecto_id' => $proyecto->id,
+                        'activo' => 1
+                    ]
+                )->id
+            );
+        }
+        // se desactivan todos los registros que no son validos
+        RedesInvestigacion::whereNotIn('id', $redesTemp)->update(['activo' => '0']);
+
+        Alert::success('Exito','El proyecto se modifico exitosamente');
+        return redirect()->route('home');
     }
     public function proyecto_definitivo($id)
     {

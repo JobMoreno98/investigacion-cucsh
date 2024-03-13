@@ -104,7 +104,7 @@
                                 </svg>
                             </button></label>
                         <select class="form-control" name="enfoque" id="enfoque" required value="{{ old('enfoque') }}">
-			    <option value="{{ $proyecto->enfoque }}" selected>{{ $proyecto->enfoque }}</option>
+                            <option value="{{ $proyecto->enfoque }}" selected>{{ $proyecto->enfoque }}</option>
                             <option disabled>Elegir una opción</option>
                             <option value="Disciplinario">Disciplinario</option>
                             <option value="Interdisciplinario">Interdisciplinario</option>
@@ -114,11 +114,12 @@
                     </div>
                     <div class="col-md-4 p-2">
                         <label class="form-label" for="">Registro y apoyo económico en otras instituciones</label>
-                        <select class="form-control" name="otras_intituciones[]" id=""
-                            value="">
+                        <select class="form-control" name="otras_intituciones[]" id="" value="">
                             <option disabled>Elegir una opción</option>
-                            <option {{((strcmp($proyecto->otras_instituciones,'No aplica')==0)?'selected':'')}} value="No aplica">No aplica</option>
-                            <option {{((strcmp($proyecto->otras_instituciones,'No aplica')!=0)?'selected':'')}} value="Si">Si</option>
+                            <option {{ strcmp($proyecto->otras_instituciones, 'No aplica') == 0 ? 'selected' : '' }}
+                                value="No aplica">No aplica</option>
+                            <option {{ strcmp($proyecto->otras_instituciones, 'No aplica') != 0 ? 'selected' : '' }}
+                                value="Si">Si</option>
 
                         </select>
 
@@ -126,7 +127,7 @@
                     <div class="col-md-12 p-2">
                         <label class="form-label" for="">En caso de recibir financiamiento especificar institución y
                             monto</label>
-                        <textarea class="form-control" name="otras_intituciones[]" id="">{{((strcmp($proyecto->otras_instituciones,'No aplica')!=0)?$proyecto->otras_instituciones:'No aplica')}}</textarea>
+                        <textarea class="form-control" name="otras_intituciones[]" id="">{{ strcmp($proyecto->otras_instituciones, 'No aplica') != 0 ? $proyecto->otras_instituciones : 'No aplica' }}</textarea>
                     </div>
                 </div>
 
@@ -214,8 +215,8 @@
                                     <label class="form-label" for="">Congresos</label>
                                 </div>
                                 <div class="col-md-3">
-                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[0] }}" min="0" type="number"
-                                        class="form-control" id="" >
+                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[0] }}" min="0"
+                                        type="number" class="form-control" id="">
                                 </div>
                             </div>
 
@@ -224,8 +225,8 @@
                                     <label class="form-label" for="">Coloquios</label>
                                 </div>
                                 <div class="col-md-3">
-                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[1] }}" min="0" type="number"
-                                        class="form-control" id="">
+                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[1] }}" min="0"
+                                        type="number" class="form-control" id="">
                                 </div>
                             </div>
                             <div class="col-md-12 pt-1 row justify-content-around align-items-center">
@@ -233,8 +234,8 @@
                                     <label class="form-label" for="">Conferecnias</label>
                                 </div>
                                 <div class="col-md-3">
-                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[2] }}" min="0" type="number"
-                                        class="form-control" id="">
+                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[2] }}" min="0"
+                                        type="number" class="form-control" id="">
                                 </div>
                             </div>
                             <div class="col-md-12 pt-1 row justify-content-around align-items-center">
@@ -242,18 +243,18 @@
                                     <label class="form-label" for="">Articulos cientificos</label>
                                 </div>
                                 <div class="col-md-3">
-                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[3] }}" min="0" type="number"
-                                        class="form-control" id="">
+                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[3] }}" min="0"
+                                        type="number" class="form-control" id="">
                                 </div>
                             </div>
                             <div class="col-md-12 pt-1 row justify-content-around align-items-center">
                                 <div class="col-md-8 ">
                                     <label class="form-label" for="">Capitulos de libros</label>
                                 </div>
-                               
+
                                 <div class="col-md-3">
-                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[4] }}" min="0" type="number"
-                                        class="form-control" id="">
+                                    <input name="divulgacion[]" value="{{ $proyecto->divulgacion[4] }}" min="0"
+                                        type="number" class="form-control" id="">
                                 </div>
                             </div>
                             <div class="col-md-12 pt-1 row justify-content-around align-items-center">
@@ -268,7 +269,7 @@
                             <div>
                                 <label for="" class="form-label">En caso de ser Otro llenar este campo</label>
                                 <input class="form-control" type="text" name="otro" placeholder="Otro"
-                                    id="" >
+                                    id="">
                             </div>
                         </div>
                     </div>
@@ -277,12 +278,14 @@
                         <select class="form-control" name="vinculacion_cuerpos[]" id="">
                             <option disabled>Elegir una opción</option>
                             <option value="Si">Si</option>
-                            <option {{(strcmp($proyecto->vinculacion_redes,'No') == 0)?'selected':''}} value="No">No</option>
+                            <option {{ strcmp($proyecto->vinculacion_redes, 'No') == 0 ? 'selected' : '' }}
+                                value="No">No
+                            </option>
                         </select>
                         <div>
                             <label for="" class="form-label">En caso afirmativo favor de mencionar los nombres de
                                 los Cuerpos Académicos con los que se vincula</label>
-                            <textarea class="form-control" name="vinculacion_cuerpos[]" placeholder="Cuerpos Académicos" id="">{{ (old('vinculacion_cuerpos.1'))?old('vinculacion_cuerpos.1'):'No aplica' }}</textarea>
+                            <textarea class="form-control" name="vinculacion_cuerpos[]" placeholder="Cuerpos Académicos" id="">{{ old('vinculacion_cuerpos.1') ? old('vinculacion_cuerpos.1') : 'No aplica' }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -296,16 +299,43 @@
                                 redes académicas:</label>
                             <select class="form-control" name="vinculacion_redes[]" id="">
                                 <option disabled>Elegir una opción</option>
-                                <option value="Si" >Si</option>
-                                <option value="No" {{(strcmp($proyecto->vinculacion_redes,'No aplica') == 0)?'selected':''}}>No</option>
+                                <option value="Si">Si</option>
+                                <option value="No"
+                                    {{ strcmp($proyecto->vinculacion_redes, 'No aplica') == 0 ? 'selected' : '' }}>No
+                                </option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <label for="" class="form-label">Si aplicará favor de indicar el nombre y nivel de las
-                            redes académicas de las que se encuentra vinculada <br><span class="text-muted">* NOTA: los niveles son Local, Nacional, Internacional</span> </label>
+                            redes académicas de las que se encuentra vinculada <br><span class="text-muted">* NOTA: los
+                                niveles son Local, Nacional, Internacional</span> </label>
 
-                        <textarea class="form-control" name="vinculacion_redes[]" placeholder="Redes académicas" id="">{{ (isset($proyecto->vinculacion_redes))?$proyecto->vinculacion_redes:'' }}</textarea>
+                        <div id="formulario">
+                            @foreach ($redes as $item)
+                                <div class="input-group d-flex flex-wrap" id="{{ $item }}">
+                                    <input type="text" class="form-control col-md-3 m-1 rounded" name="r_nombre[]"
+                                        value="{{ $item->nombre }}">
+                                    <select class="form-control col-md-3 m-1 rounded" name="r_tipo[]" id="">
+                                        <option {{ strcmp($item->nivel, 'Estatal') == 0 ? 'selected' : '' }} value="Estatal">
+                                            Estatal</option>
+                                        <option {{ strcmp($item->nivel, 'Nacional') == 0 ? 'selected' : '' }} value="Nacional">
+                                            Nacional</option>
+                                        <option {{ strcmp($item->nivel, 'Internacional') == 0 ? 'selected' : '' }}
+                                            value="Internacional">Internacional</option>
+                                        <option {{ strcmp($item->nivel, 'Otro') == 0 ? 'selected' : '' }} value="Otro">Otro
+                                        </option>
+                                    </select>
+                                    <span class="btn  btn-danger m-1 rounded-right" onclick="eliminar('{{ $item }}')">X</span>
+                                    <br>
+                                </div>
+                            @endforeach
+
+                        </div>
+                        <div>
+                            <button type="button" id="agregar" class="clonar btn btn-secondary btn-sm">+</button>
+                            <label for="agregar">Agregar</label>
+                        </div>
                     </div>
 
                 </div>
@@ -335,15 +365,6 @@
 
             </form>
         </div>
-        <script>
-            $(document).ready(function() {
-                alert("Solo dispones de 30 minutos para el editar, después de este tiempo tu sesión caducará ", {
-                    title: false
-                });
-            });
-        </script>
-
-        
         <!--   Modal enfoque del proyecto   -->
         <div class="modal fade" id="info_enfoque" tabindex="-1" aria-labelledby="info_enfoque" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -381,4 +402,10 @@
                 </div>
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
+
+@section('js')
+    @include('sweetalert::alert')
+    <script src="{{ asset('js/addSelect.js') }}"></script>
+@endsection

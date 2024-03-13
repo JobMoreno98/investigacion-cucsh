@@ -18,11 +18,8 @@ return new class extends Migration
             $table->string('nombre', 255);
             $table->string('nivel', 30);
             $table->unsignedBigInteger('proyecto_id')->nullable();
-
-            $table
-                ->foreign('proyecto_id')
-                ->references('id')
-                ->on('proyectos');
+            $table->foreign('proyecto_id')->references('id')->on('proyectos');
+            $table->tinyInteger('activo')->default(1);
             $table->timestamps();
         });
     }
