@@ -21,7 +21,7 @@
             
             <div class="col-sm-12 col-md-10">
                 <h3 class="text-center my-1 py-1 border-bottom border-2">FORMATO DE EVALUACIÓN</h3>
-                <h3 class="text-center">Folio: {{ $proyecto->folio }} <br> Titulo:{{ $proyecto->titulo_proyecto }}</h3>
+                <h3 class="text-center">Folio: {{ $proeycto->ciclo->anio."/".$proyecto->folio }} <br> Titulo:{{ $proyecto->titulo_proyecto }}</h3>
             </div>
             <div class="row">
                 <div class="col-md-12">

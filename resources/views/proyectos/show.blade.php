@@ -6,46 +6,121 @@
                 <div class="card w-100  shadow-sm">
                     <div class="card-body">
                         <h4 class="card-title text-center border-bottom mb-3 pb-3">Folio:
-                            {{ $proyecto->folio }}
+                            {{ $proyecto->ciclo->anio . '/' . $proyecto->folio }}
                             <br /> Título: {{ $proyecto->titulo_proyecto }}
                         </h4>
                         <div class="row justify-content-center">
-                            <div class=" col-sm-6 col-md-3 col-lg-2 text-center">
+                            <div class=" my-1 col-sm-6 col-md-3 col-lg-2 text-center">
                                 <p class="card-text"><span class="fw-bold">Fecha inicio</span> <br>
                                     {{ $proyecto->fecha_inicio }}</p>
                             </div>
-                            <div class=" col-sm-6 col-md-3 col-lg-2 text-center">
+                            <div class=" my-1 col-sm-6 col-md-3 col-lg-2 text-center">
                                 <p class="card-text"><span class="fw-bold">Fecha fin</span> <br> {{ $proyecto->fecha_fin }}
                                 </p>
                             </div>
-                            <div class=" col-sm-6 col-md-3 col-lg-2 text-center">
+                            <div class=" my-1 col-sm-6 col-md-3 col-lg-2 text-center">
                                 <p class="card-text"><span class="fw-bold"> Tipo de registro</span><br>
                                     {{ $proyecto->tipo_registro }}</p>
                             </div>
-                            <div class=" col-sm-6 col-md-3 col-lg-2 text-center">
+                            <div class=" my-1 col-sm-6 col-md-3 col-lg-2 text-center">
                                 <p class="card-text"><span class="fw-bold"> Tipo proyecto</span><br>
                                     {{ $proyecto->tipo_proyecto }}</p>
                             </div>
-                            <div class=" col-sm-6 col-md-3 col-lg-2 text-center">
+                            <div class=" my-1 col-sm-6 col-md-3 col-lg-2 text-center">
                                 <p class="card-text"><span class="fw-bold">Sector que impacta</span> <br>
                                     {{ $proyecto->sector }}</p>
                             </div>
 
+                            <h4 class="text-center mt-3"><span
+                                    class="border-1 border-dark border-bottom px-2 ">Resumen</span>
+                            </h4>
+                            <div class="col-sm-12 col-md-10 text-start">
+                                {!! $proyecto->abstract !!}
+                            </div>
                         </div>
-                        <h4 class="text-center mt-3"><span class="border-1 border-dark border-bottom px-2 ">Apoyo otras
+                        <div class="row justify-content-center">
+                            <h4 class="text-center mt-3">
+                                <span class="border-1 border-dark border-bottom px-2 ">Metodología</span>
+                            </h4>
+                            <div class="col-sm-10 ">
+
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+                                                aria-controls="collapseOne">
+                                                Metodologías
+                                            </button>
+                                        </h2>
+                                        <div id="collapseOne" class="accordion-collapse collapse"
+                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                {!! $metodologias->metodologia !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                                aria-expanded="false" aria-controls="collapseTwo">
+                                                Objetívos
+                                            </button>
+                                        </h2>
+                                        <div id="collapseTwo" class="accordion-collapse collapse"
+                                            aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                {!! $metodologias->objetivos !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingThree">
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                                aria-expanded="false" aria-controls="collapseThree">
+                                                Hipotesís
+                                            </button>
+                                        </h2>
+                                        <div id="collapseThree" class="accordion-collapse collapse"
+                                            aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                {!! $metodologias->hipotesis !!}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingFour">
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                                aria-expanded="false" aria-controls="collapseThree">
+                                                Criterios Éticos
+                                            </button>
+                                        </h2>
+                                        <div id="collapseFour" class="accordion-collapse collapse"
+                                            aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                {!! $metodologias->criterios_eticos !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <h4 class="text-center mt-3"><span class=" px-2 ">Apoyo otras
                                 instituciones</span>
                         </h4>
                         <div class="row text-center justify-content-center">
                             {!! $proyecto->otras_instituciones !!}
                         </div>
 
-                        <h4 class="text-center mt-3"><span class="border-1 border-dark border-bottom px-2 ">Resumen</span>
-                        </h4>
                         <div class="row text-center justify-content-center ">
-                            <div class="col-sm-12 col-md-9 text-start">
-                                {!! $proyecto->abstract !!}
-                            </div>
-                            <h4 class="mt-4 pt-4"><span class="border-1 border-dark border-bottom px-2">Personal adscrito al
+                            <h4 class="mt-4 pt-4"><span class=" px-2">Personal adscrito al
                                     proyecto</span>
                             </h4>
                             <div class="col-sm-12 col-md-6 mt-2 pt-2">
@@ -73,7 +148,8 @@
 
 
                     <div class="row text-center ">
-                        <h4 class="mt-4 pt-4"><span class="border-1 border-dark border-bottom px-2">Actividades de divulgación</span>
+                        <h4 class="mt-4 pt-4"><span class="border-1 border-dark border-bottom px-2">Actividades de
+                                divulgación</span>
                         </h4>
                         <div class="col-md-6 mt-2 pt-2">
                             <h6><span class="border-2  border-bottom px-2">Divulgación y/o difución de la ciencia a través
@@ -103,8 +179,6 @@
                                 vinculación</span>
                         </h4>
                         <div class="col-md-6 mt-2 pt-2">
-                            <h6><span class="border-2  border-bottom px-2">A través de su proyecto se encuentra vinculado
-                                    con redes académicas</span></h6>
                             @foreach ($redes as $item)
                                 <p>
                                     <span>Nombre: </span> {{ $item->nombre }} <br>
@@ -115,6 +189,7 @@
 
                         </div>
                     </div>
+
                     <div class="row  mx-5">
                         <h4 class="mt-4 pt-4 text-center"><span
                                 class="border-1 border-dark border-bottom px-2">Recursos</span>
@@ -210,13 +285,13 @@
                         </h4>
                         <div class="col-auto">
                             <a target="_blank"class="btn border-2  border-bottom px-2"
-                                href="{{ asset('/storage/anexos/' . $proyecto->anexo) }}">Proyecto en extenso</a>
+                                href="{{ asset('/storage/anexos/' . $proyecto->extenso) }}">Proyecto en extenso</a>
                         </div>
 
                         @if (strcmp($proyecto->avances, '') != 0 && strcmp($proyecto->tipo_registro, 'Proyecto continuación') == 0)
                             <div class="col-auto">
                                 <a target="_blank" class="btn border-2  border-bottom px-2"
-                                    href="{{ asset('/storage/continuacion/'. $proyecto->avances) }}">Informe de avances
+                                    href="{{ asset('/storage/continuacion/' . $proyecto->avances) }}">Informe de avances
                                     del
                                     proyecto</a>
                             </div>

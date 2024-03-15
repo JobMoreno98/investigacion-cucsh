@@ -245,12 +245,12 @@
                         algun cambio debe de llevar el mismo nombre que el anteriror</span>
                     <hr class="mt-3">
                     <div class="col-md-4">
-                        <label class="form-label" for="anexos">Proyecto en extenso</label>
-                        <input accept=".pdf" class="form-control" type="file" name="anexos">
+                        <label class="form-label" for="extenso">Proyecto en extenso</label>
+                        <input accept=".pdf" class="form-control" type="file" name="extenso">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label" for="cronograma">Cronograma</label>
-                        <input accept=".pdf" class="form-control" type="file" name="cronograma">
+                        <label class="form-label" for="resultados">Informe de resultados</label>
+                        <input accept=".pdf" class="form-control" type="file" name="resultados">
                     </div>
 
                 </div>

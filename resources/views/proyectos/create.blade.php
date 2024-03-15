@@ -213,20 +213,25 @@
 
                 @include('proyectos.form-recursos')
                 <div class="row mt-3 justify-content-center">
-                    <h3>Archivos</h3>
-                    <span class="text-muted">* NOTA 1: subir sus archivos en formato PDF.</span> <br>
-                    <span class="text-muted">* NOTA 2: anexar el documento en extenso con mínimo 10 cuartillas con formato APA 7.</span>
-                    <span class="text-muted">* NOTA 3: en caso de ser proyecto de continuidad debera entregar el informe de resultados.</span>
-                    <hr class="mt-3">
-                    <div class="col-md-4">
-                        <label class="form-label" for="anexos">Proyecto en extenso</label>
-                        <input accept=".pdf" class="form-control" type="file" name="anexos" required>
+                    <div class="col-md-6">
+                        <h3>Archivos</h3>
+                        <span class="text-muted">* NOTA 1: subir sus archivos en formato PDF.</span> <br>
+                        <span class="text-muted">* NOTA 2: anexar el documento en extenso con mínimo 10 cuartillas con
+                            formato APA 7.</span> <br>
+                        <span class="text-muted">* NOTA 3: en caso de ser proyecto de continuidad debera entregar el
+                            informe de resultados.</span> <br>
+                        <span class="text-muted">* NOTA 4: favor de no incluir sus nombres en los archivos que se
+                            suban.</span>
+                        <hr class="mt-3">
                     </div>
+
                     <div class="col-md-4">
+                        <label class="form-label" for="extenso">Proyecto en extenso</label>
+                        <input accept=".pdf" class="form-control" type="file" name="extenso" required>
                         <label class="form-label" for="resultados">Informe de resultados</label>
                         <input accept=".pdf" class="form-control" type="file" name="resultados" required>
                     </div>
-                    
+
                 </div>
 
                 <div class="row mt-3 justify-content-center">

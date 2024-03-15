@@ -10,27 +10,26 @@
                 </div>
             @endif
             <div class="col-sm-12">
-                <table class="table align-middle compact order-column" id="myTable">
+                <table class="table align-middle compact order-column " id="myTable">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Folio</th>
-                            <th>Título</th>
-                            <th>Nombre</th>
-                            <th>Proyecto extenso</th>
-                            <th>Acciones</th>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Folio</th>
+                            <th class="text-center">Título</th>
+                            <th class="text-center">Proyecto extenso</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($proyectos as $item)
                             <tr>
                                 <td>{{ $item->proyecto->id }}</td>
-                                <td>{{ $item->proyecto->folio }}</td>
+                                <td>{{ $item->proyecto->ciclo->anio . '/' . $item->proyecto->folio }}</td>
                                 <td>{{ $item->proyecto->titulo_proyecto }}</td>
-                                <td>{{ $item->proyecto->user->name }}</td>
-                                <td>
-<a href="{{ url('/storage/anexos/' . $item->proyecto->anexo) }}" target="_blank">Ver
-                                        proyecto</a> </td>
+                                <td class="text-center">
+                                    <a href="{{ asset('/storage/extenso/' . $item->proyecto->extenso) }}"
+                                        class=" btn btn-secondary btn-sm my-1" target="_blank">Ver proyecto extenso</a>
+                                </td>
                                 <td style="width:150px;">
                                     @if (strcmp($item->dictamen, '-') == 0)
                                         <a href="{{ route('crear-evaluacion', $item->proyecto) }}"

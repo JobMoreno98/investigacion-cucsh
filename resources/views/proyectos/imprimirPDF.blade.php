@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,28 +8,55 @@
     <title>{{ $proyecto->ciclo->anio }}/{{ $proyecto->id }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+    <style>
+        #footer {
+            position: fixed;
+            bottom: 0cm;
+            left: 0cm;
+            right: 0cm;
+            height: 2cm;
+        }
+
+        @page {
+            margin-top: 15px;
+            margin-bottom: 0px;
+        }
+
+        .pie {
+            font-size: 10px;
+            text-align: center;
+            border-top: grey 1px solid;
+            margin-top: 15px;
+            padding-top: 10px;
+        }
+
+        #footer .page:after {
+            content: counter(page, decimal);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-sm-12 col-md-12">
-                <div class="card w-100  shadow-sm">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12 col-xs-12">
-                                <p class="text-center"><img class="img-responsive" src="images/logo.jpg" width="100%"></p>
+    <footer id="footer">
+        <p class="pie"><span class="page">Página </span></p>
+    </footer>
+    <main>
+        <div >
+            <div >
+                <div >
+                    <div >
+                        <div >
+                            <div >
+                                <p class="text-center"><img class="img-responsive" src="images/logo.jpg" height="100px">
+                                </p>
                             </div>
                         </div>
-                    
+
                         <h4 class="card-title text-center border-bottom mb-3 pb-3">Folio:
                             {{ $proyecto->ciclo->anio }}/{{ $proyecto->id }}
                             <br /> Título: {{ $proyecto->titulo_proyecto }}
                         </h4>
-                        <table class="table">
+                        <table class="table table-borderless">
                             <thead>
                                 <tr>
                                     <th class="text-center">Fecha inicio</th>
@@ -48,6 +76,42 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <h4 class="text-center mt-3"><span
+                                class="border-1 border-dark border-bottom px-2 ">Resumen</span>
+                        </h4>
+                        <div class="col-sm-12 col-md-9 text-start">
+                            {!! $proyecto->abstract !!}
+                        </div>
+
+                        <h4 class="text-center mt-3"><span
+                                class="border-1 border-dark border-bottom px-2 ">Metodología</span>
+                        </h4>
+                        <div class="col-sm-12 col-md-9 text-start">
+                            {!! $metodologias->metodologia !!}
+                        </div>
+
+                        <h4 class="text-center mt-3"><span
+                                class="border-1 border-dark border-bottom px-2 ">Objetivos</span>
+                        </h4>
+                        <div class="col-sm-12 col-md-9 text-start">
+                            {!! $metodologias->objetivos !!}
+                        </div>
+
+                        <h4 class="text-center mt-3"><span class="border-1 border-dark border-bottom px-2 ">Preguntas o
+                                Hipotesis</span>
+                        </h4>
+                        <div class="col-sm-12 col-md-9 text-start">
+                            {!! $metodologias->hipotesis !!}
+                        </div>
+
+                        <h4 class="text-center mt-3"><span class="border-1 border-dark border-bottom px-2 ">Criterios
+                                Éticos</span>
+                        </h4>
+                        <div class="col-sm-12 col-md-9 text-start">
+                            {!! $metodologias->criterios_eticos !!}
+                        </div>
+
+
                         <h4 class="text-center mt-3"><span class="border-1 border-dark border-bottom px-2 ">Apoyo otras
                                 instituciones</span>
                         </h4>
@@ -55,14 +119,8 @@
                             {!! $proyecto->otras_instituciones !!}
                         </div>
 
-                        <h4 class="text-center mt-3"><span
-                                class="border-1 border-dark border-bottom px-2 ">Resumen</span>
-                        </h4>
-                        <div class="row text-center justify-content-center ">
-                            <div class="col-sm-12 col-md-9 text-start">
-                                {!! $proyecto->abstract !!}
-                            </div>
 
+                        <div class="row text-center justify-content-center ">
                             <h4 class="mt-4 pt-4"><span class="border-1 border-dark border-bottom px-2">Personal
                                     adscrito al
                                     proyecto</span>
@@ -75,7 +133,7 @@
                                         <td class="text-center">Profesores <br>{!! $proyecto->personal[1] !!}</td>
                                     </tr>
                                     <tr>
-                                        <td class="text-center">Colaboradores <br/>{!! $proyecto->personal[2] !!}</td>
+                                        <td class="text-center">Colaboradores <br />{!! $proyecto->personal[2] !!}</td>
                                         <td class="text-center">Asistentes externos <br>{!! $proyecto->personal[3] !!}</td>
                                     </tr>
                                 </tbody>
@@ -119,7 +177,7 @@
 
 
                     <div class="row text-center ">
-                        <h4 class="mt-4 pt-4"><span class="border-1 border-dark border-bottom px-2">Redes de
+                        <h4 class="mt-2 pt-2"><span class="border-1 border-dark border-bottom px-2">Redes de
                                 vinculación</span>
                         </h4>
                         <div class="col-md-6 mt-2 pt-2">
@@ -127,12 +185,6 @@
                                     vinculado
                                     con redes académicas</span></h6>
                             {!! $proyecto->vinculacion_redes !!}
-                        </div>
-
-                        <div class="col-md-6 mt-2 pt-2">
-                            <h6><span class="border-2  border-bottom px-2">Vinculación con Cuerpos Académicos</span>
-                            </h6>
-                            {!! $proyecto->vinculacion_ca !!}
                         </div>
                     </div>
                     <div class="row  mx-5">
@@ -202,20 +254,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 col-xs-12">
-            <br>
-            <br>
-            @php
-                date_default_timezone_set('America/Mexico_City');
-            @endphp
-            <p class="pie">Hora y día de impresión:  {{ date('d-m-Y H:i:s') }}<br>
-                Realizado por:  {{ Auth::user()->name }}<br>
-                Formato CTA-050. Actualización: 15/marzo/2023</p>
-        </div>
-    </div>
-
+    </main>
 </body>
-
 </html>

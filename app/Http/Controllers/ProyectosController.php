@@ -10,17 +10,29 @@ use App\Models\Metodologias;
 use App\Models\Recursos;
 use App\Models\RedesInvestigacion;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
-use Barryvdh\DomPDF\PDF;
-use DragonCode\Support\Facades\Filesystem\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ProyectosController extends Controller
 {
+    protected $messages = [
+        'tipo_registro.required' => 'Favor de ingresar el campo tipo de registro',
+        'tipo_proyecto.required' => 'Favor de ingresar el campo tipo de proyecto',
+        'sector.required' => 'Favor de ingresar el campo sector que impacta',
+        'titulo.required' => 'Favor de ingresar el titulo',
+        'abstract.required' => 'Favor de ingresar el resumen del proyecto',
+        'justificacion_recursos.max:2000' => 'La justificaion es demasiado larga',
+        'enfoque.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+        'justificacion.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+        'metodologia.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+        'objetivos.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+        'hipotesis.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+        'criterios_eticos.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+        'referencias.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
+    ];
     public function __construct()
     {
         $this->middleware('auth');
@@ -61,7 +73,7 @@ class ProyectosController extends Controller
     {
         $user = User::find(Auth::user()->id);
         $ciclo = ciclos::where('activo', 1)->first();
-        $folio = proyectos::select('id', 'folio')->where('ciclo_id', $ciclo->id)
+        $folio = proyectos::select('id', 'folio')->where('ciclo_id', $ciclo->id)->where('activo', 1)
             ->latest()
             ->first();
 
@@ -87,21 +99,7 @@ class ProyectosController extends Controller
                 ]);
         }
 
-        $messages = [
-            'tipo_registro.required' => 'Favor de ingresar el campo tipo de registro',
-            'tipo_proyecto.required' => 'Favor de ingresar el campo tipo de proyecto',
-            'sector.required' => 'Favor de ingresar el campo sector que impacta',
-            'titulo.required' => 'Favor de ingresar el titulo',
-            'abstract.required' => 'Favor de ingresar el resumen del proyecto',
-            'justificacion_recursos.max:2000' => 'La justificaion es demasiado larga',
-            'enfoque.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
-            'justificacion.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
-            'metodologia.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
-            'objetivos.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
-            'hipotesis.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
-            'criterios_eticos.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
-            'referencias.required' => 'Favor de ingresar el enfoque al cual aplica el proyecto',
-        ];
+
 
         $request->validate(
             [
@@ -119,7 +117,7 @@ class ProyectosController extends Controller
                 'criterios_eticos' => 'required',
                 'referencias' => 'required',
             ],
-            $messages,
+            $this->messages,
         );
 
 
@@ -178,35 +176,56 @@ class ProyectosController extends Controller
             );
         }
         //  -- Archivos  --
-        if ($request->hasfile('anexos')) {
-            $archivo = $request->file('anexos');
+        if ($request->hasfile('extenso')) {
+            $archivo = $request->file('extenso');
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
-
-            Storage::disk('anexos')->put($nombre, File::get($archivo));
-            $proyecto->anexo = $nombre;
+            $nombre = str_replace(' ', '_', $nombre);
+            Storage::disk('extenso')->put($nombre, \File::get($archivo));
+            $proyecto->extenso = $nombre;
         }
 
         if ($request->hasfile('cronograma')) {
             $archivo = $request->file('cronograma');
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
-            Storage::disk('cronogramas')->put($nombre, File::get($archivo));
+            $nombre = str_replace(' ', '_', $nombre);
+            Storage::disk('cronogramas')->put($nombre, \File::get($archivo));
             $proyecto->cronograma = $nombre;
         }
+
+        if ($request->hasfile('resultados')) {
+            $archivo = $request->file('resultados');
+            $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
+            $nombre = str_replace('/', '_', $nombre);
+            $nombre = str_replace(' ', '_', $nombre);
+            Storage::disk('continuacion')->put($nombre, \File::get($archivo));
+            $proyecto->cronograma = $nombre;
+        }
+
         $recurso = new Recursos();
         for ($i = 0; $i < 8; $i++) {
             $numero = 'p_0' . strval($i + 1);
             $recurso->$numero = $request->recursos[$i];
         }
+
         if (isset($request->justificacion_recursos)) {
             $recurso->justificacion = $request->justificacion_recursos;
         }
-        //return $request;
-        //return $proyecto;
-        $recurso->save();
+        if ($request->hasfile('anexos')) {
+            $archivo = $request->file('anexos');
+            $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
+            $nombre = str_replace('/', '_', $nombre);
+            $nombre = str_replace(' ', '_', $nombre);
+            Storage::disk('anexos')->put($nombre, \File::get($archivo));
+            $anexos = $nombre;
+        } else {
+            $anexos = '';
+        }
 
+        $recurso->save();
         $proyecto->recursos_id = $recurso->id;
+
         $proyecto->save();
         if (isset($request->r_nombre)) {
             for ($i = 0; $i < count($request->r_nombre); $i++) {
@@ -218,18 +237,19 @@ class ProyectosController extends Controller
             }
         }
 
+
         Metodologias::create([
             'metodologia' =>  $request->metodologia,
             'objetivos' =>  $request->objetivos,
             'hipotesis' =>  $request->hipotesis,
             'criterios_eticos' =>  $request->criterios_eticos,
             'referencias' =>  $request->referencias,
-            'proyecto_id' => $proyecto->id
+            'proyecto_id' => $proyecto->id,
+            'anexos' => $anexos
         ]);
 
         Alert::success("Exito", 'El proyecto se registro exitosamente');
-        return redirect()
-            ->route('home');
+        return redirect()->route('home');
     }
     public function show(proyectos $proyecto)
     {
@@ -251,8 +271,9 @@ class ProyectosController extends Controller
             $proyecto->monto_total = $total;
 
             $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)->where('activo', 1)->get();
+            $metodologias = Metodologias::where('proyecto_id', $proyecto->id)->first();
 
-            return view('proyectos.show', compact('proyecto', 'redes'));
+            return view('proyectos.show', compact('proyecto', 'redes', 'metodologias'));
         } else {
             return redirect()->route('home');
         }
@@ -301,7 +322,7 @@ class ProyectosController extends Controller
         $proyecto->fecha_fin = $request->fecha_fin;
         $proyecto->abstract = $request->abstract;
         $proyecto->enfoque = $request->enfoque;
-
+        $proyecto->justificacion = $request->justificacion;
         $proyecto->personal = implode('<separador>', $request->personal);
         $proyecto->recursos_concurrentes = $request->recursos_concurrentes;
         $proyecto->divulgacion = implode('<separador>', $request->divulgacion);
@@ -334,13 +355,13 @@ class ProyectosController extends Controller
             $proyecto->vinculacion_redes = "Si";
         }
 
-        if ($request->hasfile('anexos')) {
-            $archivo = $request->file('anexos');
+        if ($request->hasfile('extenso')) {
+            $archivo = $request->file('extenso');
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
             $nombre = str_replace(' ', '_', $nombre);
-            Storage::disk('anexos')->put($nombre, File::get($archivo));
-            $proyecto->anexo = $nombre;
+            Storage::disk('extenso')->put($nombre, \File::get($archivo));
+            $proyecto->extenso = $nombre;
         }
 
         if ($request->hasfile('cronograma')) {
@@ -348,8 +369,28 @@ class ProyectosController extends Controller
             $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
             $nombre = str_replace('/', '_', $nombre);
             $nombre = str_replace(' ', '_', $nombre);
-            Storage::disk('cronogramas')->put($nombre, File::get($archivo));
+            Storage::disk('cronogramas')->put($nombre, \File::get($archivo));
             $proyecto->cronograma = $nombre;
+        }
+
+        if ($request->hasfile('resultados')) {
+            $archivo = $request->file('resultados');
+            $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
+            $nombre = str_replace('/', '_', $nombre);
+            $nombre = str_replace(' ', '_', $nombre);
+            Storage::disk('continuacion')->put($nombre, \File::get($archivo));
+            $proyecto->cronograma = $nombre;
+        }
+
+        if ($request->hasfile('anexos')) {
+            $archivo = $request->file('anexos');
+            $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
+            $nombre = str_replace('/', '_', $nombre);
+            $nombre = str_replace(' ', '_', $nombre);
+            Storage::disk('anexos')->put($nombre, \File::get($archivo));
+            $anexos = $nombre;
+        } else {
+            $anexos = '';
         }
 
         $proyecto->update();
@@ -370,8 +411,19 @@ class ProyectosController extends Controller
                 )->id
             );
         }
+
+
         // se desactivan todos los registros que no son validos
         RedesInvestigacion::whereNotIn('id', $redesTemp)->update(['activo' => '0']);
+
+        Metodologias::where('proyecto_id')->update([
+            'metodologia' =>  $request->metodologia,
+            'objetivos' =>  $request->objetivos,
+            'hipotesis' =>  $request->hipotesis,
+            'criterios_eticos' =>  $request->criterios_eticos,
+            'referencias' =>  $request->referencias,
+            'anexos' => $anexos
+        ]);
 
         Alert::success('Exito', 'El proyecto se modifico exitosamente');
         return redirect()->route('home');
@@ -403,7 +455,11 @@ class ProyectosController extends Controller
             $total = $total + $proyecto->recursos->$numero;
         }
         $proyecto->monto_total = $total;
-        $pdf = FacadePdf::loadView('proyectos.imprimirPDF', compact('proyecto'));
+        $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)->where('activo', 1)->get();
+        $metodologias = Metodologias::where('proyecto_id', $proyecto->id)->first();
+
+        $html = view('proyectos.imprimirPDF', compact('proyecto','redes','metodologias'));
+        $pdf = FacadePdf::loadHTML($html->render());
         return $pdf->stream('formatoProyecto.pdf');
     }
 
@@ -491,7 +547,7 @@ class ProyectosController extends Controller
         $archivo = $request->file('avances');
         $nombre = $request->folio . '_' . Auth::user()->name . '.pdf';
         $nombre = str_replace('/', '_', $nombre);
-        Storage::disk('continuacion')->put($nombre, File::get($archivo));
+        Storage::disk('continuacion')->put($nombre, \File::get($archivo));
 
         $proyecto->avances = $nombre;
         $proyecto->update();

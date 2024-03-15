@@ -34,29 +34,39 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
-        'anexos' => [
+
+        'extenso' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/anexos'),
-            'url' => env('APP_URL').'/storage',
+            'root' => storage_path('app/public/extenso'),
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
+
         'cronogramas' => [
             'driver' => 'local',
             'root' => storage_path('app/public/cronogramas'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
-	'continuacion' => [
+        
+        'continuacion' => [
             'driver' => 'local',
             'root' => storage_path('app/public/continuacion'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+
+        'anexos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/anexos'),
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
 
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
 

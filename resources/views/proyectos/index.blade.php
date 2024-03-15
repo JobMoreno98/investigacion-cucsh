@@ -2,12 +2,9 @@
 
 @section('content')
     <div class="container">
-        
         @if (Auth::user()->role == 'admin' || Auth::user()->s_role == 'admin')
             @include('proyectos.reportes')
         @endif
-
-
         <div class="row">
             <div class="col-sm-12">
                 <table class="table align-middle compact order-column" id="myTable">
@@ -27,7 +24,7 @@
                         @foreach ($proyectos as $item)
                             <tr>
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->folio }}</td>
+                                <td>{{ $item->ciclo->anio ."/".$item->folio }}</td>
                                 <td>{{ $item->titulo_proyecto }}</td>
                                 <td>{{ $item->user->name }}</td>
 
@@ -117,11 +114,17 @@
                 buttons: [{
                         extend: 'excelHtml5',
                         title: 'Proyectos de investigación',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5, 6]
+                        }
 
                     },
                     {
                         extend: 'pdfHtml5',
-                        title: 'Data export'
+                        title: 'Proyectos de investigación',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5, 6]
+                        }
                     }
                 ]
             })
