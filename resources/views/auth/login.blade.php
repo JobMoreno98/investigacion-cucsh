@@ -4,12 +4,11 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="card">
-                    <div class="card-header">Acceder Registro de Proyectos de Investigación. CUCSH</div>
+                <div class="card shadow-sm">
                     <div class="card-body">
-                        <form method="POST" action="{{ route('login') }}">
+                        <h4 class="border-bottom mb-2 pb-2">Acceder Registro de Proyectos de Investigación CUCSH</h4>
+                        <form method="POST" class="mt-2 pt-2" action="{{ route('login') }}">
                             @csrf
-
                             <div class="row mb-3">
                                 <label for="email" class="col-md-4 col-form-label text-md-end">Correo electrónico </label>
 
@@ -68,16 +67,14 @@
 
                 </div>
                 <div class="card mt-5">
-                    <div class="card-header">
-                        Consideraciones a tomar
-                    </div>
                     <div class="card-body ">
-                        <p class="text-muted ">* En caso de no poder entrar intente cambiar su contraseña con el botón de
+                        <h4 class="border-bottom mb-2 pb-2">Consideraciones a tomar</h4>
+                        <p >* En caso de no poder entrar intente cambiar su contraseña con el botón de
                             arriba. </p>
-                        <p class="text-muted ">* Favor de utilizar su correo institucional "@académicos.udg.mx", en caso de
+                        <p >* Favor de utilizar su correo institucional "@académicos.udg.mx", en caso de
                             no tenerlo favor de solicitarlo en Coordinación de Tecnologías para el Aprendizaje a la ext.
                             23609.</p>
-                        <p class="text-muted">* En caso de ya tener una cuenta anteriormente favor de ingresar con ella y
+                        <p >* En caso de ya tener una cuenta anteriormente favor de ingresar con ella y
                             cambiar su correo en el apartado de datos generales.</p>
                     </div>
                 </div>

@@ -416,7 +416,7 @@ class ProyectosController extends Controller
         // se desactivan todos los registros que no son validos
         RedesInvestigacion::whereNotIn('id', $redesTemp)->update(['activo' => '0']);
 
-        Metodologias::where('proyecto_id')->update([
+        $metodologia = Metodologias::where('proyecto_id',$proyecto->id)->update([
             'metodologia' =>  $request->metodologia,
             'objetivos' =>  $request->objetivos,
             'hipotesis' =>  $request->hipotesis,

@@ -24,6 +24,7 @@
 
     <link rel="stylesheet" href="{{ asset('css/cards.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="shortcut icon" href="{{ asset('images/pi.ico') }}" type="image/x-icon">
 
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"
