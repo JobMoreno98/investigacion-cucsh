@@ -534,7 +534,12 @@ class ProyectosController extends Controller
             ->count();
 
         $definitivo['total'] = $definitivos;
-        $definitivo['progreso'] = ($definitivos * 100) / $total;
+        if ($total>0) {
+            $definitivo['progreso'] = ($definitivos * 100) / $total;
+        }else{
+            $definitivo['progreso'] =0;
+        }
+        
 
 
         $arreglo = ['Apoyo económico' => $apoyo, 'Tipo registro' => $tipo_registro->all(), 'Tipo proyecto' => $tipo_proyecto, 'Sector' => $sector];

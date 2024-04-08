@@ -252,9 +252,9 @@
 
                     <div class="col-sm-12 col-md-4">
                         <label class="form-label" for="extenso">Proyecto en extenso</label>
-                        <input accept=".pdf" class="form-control" type="file" name="extenso" required>
+                        <input accept=".pdf" class="form-control" type="file" name="extenso" >
                         <label class="form-label" for="resultados">Informe de resultados</label>
-                        <input accept=".pdf" class="form-control" type="file" name="resultados" required>
+                        <input accept=".pdf" class="form-control" type="file" name="resultados" >
                     </div>
 
                 </div>

@@ -25,7 +25,7 @@
                         @foreach ($proyectos as $item)
                             <tr>
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->folio }}</td>
+                                <td>{{ $item->ciclo->anio ."/".$item->folio }}</td>
                                 <td>{{ $item->titulo_proyecto }}</td>
                                 <td>{{ $item->user->name }}</td>
                                 <td>

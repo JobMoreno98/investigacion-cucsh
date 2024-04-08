@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ciclos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -24,7 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $ciclo = ciclos::where('activo',1)->first();
+        $ciclo = ciclos::where('activo',1)->latest()->first();
         return view('home',compact('ciclo'));
     }
 }
