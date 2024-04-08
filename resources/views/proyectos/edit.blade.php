@@ -11,10 +11,10 @@
                 </ul>
             </div>
         @endif
-        <div class="row">
+        <div class="row justify-content-center">
             <h3>Datos Generales</h3>
             <hr>
-            <form action="{{ route('proyectos.update', $proyecto->id) }}" method="post" class="row"
+            <form action="{{ route('proyectos.update', $proyecto->id) }}" method="post" class="row  justify-content-center"
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -81,8 +81,7 @@
                     </div>
 
                     <div class="col-md-6 p-2 ">
-                        <label class="form-label" for="">Recursos concurrentes en caso de aplciar al proyecto a
-                            nivel</label>
+                        <label class="form-label" for="">Recursos concurrentes en caso de aplciar al proyecto a nivel</label>
                         <select class="form-control" name="recursos_concurrentes" id="recursos_concurrentes">
                             <option value="{{ $proyecto->recursos_concurrentes }}" selected>
                                 {{ $proyecto->recursos_concurrentes }}</option>
@@ -179,7 +178,7 @@
                         <div>
                             <label for="" class="form-label">En caso afirmativo favor de mencionar los nombres de
                                 los Cuerpos Académicos con los que se vincula</label>
-                            <textarea class="form-control" name="vinculacion_cuerpos[]" placeholder="Cuerpos Académicos" id="">{{ old('vinculacion_cuerpos.1') ? old('vinculacion_cuerpos.1') : 'No aplica' }}</textarea>
+                            <textarea class="form-control" name="vinculacion_cuerpos[]" placeholder="Cuerpos Académicos" id="">{{ $proyecto->vinculacion_ca ? $proyecto->vinculacion_ca : 'No aplica' }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -239,18 +238,23 @@
                 </div>
                 @include('proyectos.form-recursos')
                 <div class="row mt-3 justify-content-center">
-                    <h3>Archivos</h3>
-                    <span class="text-muted">* NOTA 1: subir sus archivos en formato PDF</span> <br>
-                    <span class="text-muted">* NOTA 2: los archivos solamente se suben una vez, en caso de realizar
-                        algun cambio debe de llevar el mismo nombre que el anteriror</span>
-                    <hr class="mt-3">
-                    <div class="col-md-4">
-                        <label class="form-label" for="extenso">Proyecto en extenso</label>
-                        <input accept=".pdf" class="form-control" type="file" name="extenso">
+                    <div class="col-sm-12 col-md-8">
+                        <h3>Archivos</h3>
+                        <span class="text-muted">* NOTA 1: subir sus archivos en formato PDF.</span> <br>
+                        <span class="text-muted">* NOTA 2: anexar el documento en extenso con mínimo 10 cuartillas con
+                            formato APA 7.</span> <br>
+                        <span class="text-muted">* NOTA 3: en caso de ser proyecto de continuidad debera entregar el
+                            informe de resultados.</span> <br>
+                        <span class="text-muted">* NOTA 4: favor de no incluir sus nombres en los archivos que se
+                            suban.</span>
+                        <hr class="mt-3">
                     </div>
-                    <div class="col-md-4">
+
+                    <div class="col-sm-12 col-md-4">
+                        <label class="form-label" for="extenso">Proyecto en extenso</label>
+                        <input accept=".pdf" class="form-control" type="file" name="extenso" required>
                         <label class="form-label" for="resultados">Informe de resultados</label>
-                        <input accept=".pdf" class="form-control" type="file" name="resultados">
+                        <input accept=".pdf" class="form-control" type="file" name="resultados" required>
                     </div>
 
                 </div>

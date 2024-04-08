@@ -42,7 +42,6 @@
     <script type="text/javascript"
         src="https://cdn.datatables.net/v/bs5/jszip-2.5.0/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/sp-2.1.0/datatables.min.js">
     </script>
-
     <script>
         tinymce.init({
             selector: 'textarea',

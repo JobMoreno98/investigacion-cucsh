@@ -196,7 +196,7 @@
                         </h4>
 
 
-                        <div class="col-md-5 mt-2 pt-2 ">
+                        <div class="col-md-6 mt-2 pt-2 ">
                             <table class="table h-100 table-bordered">
                                 <thead>
                                     <tr>
@@ -210,25 +210,25 @@
                                 </thead>
                                 <tr>
                                     <td>3711 Transporte aéreo nacional</td>
-                                    <td>{{ $proyecto->recursos->p_01 }}</td>
+                                    <td>{{ number_format($proyecto->recursos->p_01,2) }}</td>
                                 </tr>
                                 <tr>
                                     <td>3721 Transporte terrestre nacional</td>
-                                    <td>{{ $proyecto->recursos->p_02 }}</td>
+                                    <td>{{ number_format($proyecto->recursos->p_02,2) }}</td>
                                 </tr>
                                 <tr>
                                     <td>3722 Casetas</td>
-                                    <td> {{ $proyecto->recursos->p_03 }}</td>
+                                    <td> {{ number_format($proyecto->recursos->p_03,2) }}</td>
                                 </tr>
                                 <tr>
                                     <td>3751 Hospedaje nacional </td>
-                                    <td>{{ $proyecto->recursos->p_04 }}</td>
+                                    <td>{{ number_format($proyecto->recursos->p_04,2) }}</td>
                                 </tr>
 
                             </table>
                         </div>
 
-                        <div class="col-md-7 mt-2 pt-2 ">
+                        <div class="col-md-6 mt-2 pt-2 ">
                             <table class="table h-100 table-bordered">
                                 <thead>
                                     <tr>
@@ -242,20 +242,20 @@
                                 </thead>
                                 <tr>
                                     <td>3753 Alimentación nacional </td>
-                                    <td>{{ $proyecto->recursos->p_05 }}</td>
+                                    <td>{{ number_format($proyecto->recursos->p_05,2) }}</td>
                                 </tr>
                                 <tr>
                                     <td>2611 Combustible </td>
-                                    <td>{{ $proyecto->recursos->p_06 }}</td>
+                                    <td>{{ number_format($proyecto->recursos->p_06,2) }}</td>
                                 </tr>
                                 <tr>
                                     <td>2111 Papelería</td>
-                                    <td> {{ $proyecto->recursos->p_07 }}</td>
+                                    <td> {{ number_format($proyecto->recursos->p_07,2) }}</td>
                                 </tr>
                                 <tr>
                                     <td>2141 Tóner y memoria usb (para el caso de las memorias USB con precio unitario menor
                                         a $4,211.83 pesos) </td>
-                                    <td>{{ $proyecto->recursos->p_08 }}</td>
+                                    <td>{{ number_format($proyecto->recursos->p_08,2) }}</td>
                                 </tr>
                             </table>
                         </div>
