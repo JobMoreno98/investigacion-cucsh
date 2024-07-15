@@ -29,7 +29,7 @@
                                 @if (isset(Auth::user()->datos) && isset($ciclo->anio))
                                     <div class="col-sm-12 col-md-auto m-1">
                                         <a href="{{ route('proyectos.create') }}"
-                                            class="w-100 text-decoration-none btn btn-primary ">
+                                            class="w-100 text-decoration-none btn btn-primary {{ $proyectos >= 2 ? 'disabled' : '' }}">
                                             Registrar Proyecto
                                         </a>
                                     </div>
@@ -45,7 +45,13 @@
                                             algún proyecto debes primero llenar tus datos generales</p>
                                     @endif
                                 @endif
-                                    <p class="text-muted m-0 mt-2 pt-2 border-top fw-bold">* Recuerda siempre tener tus datos generales actualizados.</p>
+                                @if ($proyectos >= 2)
+                                    <p class="fs-6 text-muted m-0 mt-2 pt-2 fw-bold"><span
+                                            style="border-bottom:red 1px solid;color:red;">* Solo puedes registrar dos
+                                            proyectos.</span> </p>
+                                @endif
+                                <p class="text-muted m-0 mt-2 pt-2 border-top fw-bold">* Recuerda siempre tener tus
+                                    datos generales actualizados.</p>
 
 
                             </div>

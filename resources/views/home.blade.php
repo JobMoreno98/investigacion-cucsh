@@ -11,8 +11,30 @@
                             Auth::user()->s_role == 'evaluador' ||
                             (Auth::user()->role == 'admin' || Auth::user()->s_role == 'admin'))
                         <a target="_blank" style="background:#072d45;color:#fff;" class="btn "
-                            href="{{ asset('storage/Carta de imparcialidad y confidencialidad de datos-23.docx') }}">Carta
+                            href="{{ asset('storage/Carta de imparcialidad y confidencialidad de datos-24.docx') }}">Carta
                             de imparcialidad y confidencialidad de datos</a>
+
+                        @if (Auth::user()->role == 'evaluador' || Auth::user()->s_role == 'evaluador')
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    @foreach ($errors->all() as $error)
+                                        {{ $error }}
+                                    @endforeach
+                                </div>
+                            @endif
+                            <form enctype="multipart/form-data" action="{{ route('carta.confidencialidad') }}"
+                                class="justify-content-center  mt-2 mx-auto row col-sm-12 col-md-6" method="post">
+                                @csrf
+                                <div>
+                                    <label for="carta">Carta de imparcialidad y confidencialidad de datos</label>
+                                    <input name="carta" accept=".pdf" type="file" id="carta" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-success my-1"
+                                    style="width:150px;">Enviar</button>
+                            </form>
+                        @endif
+
+
                     @endif
                 </span>
             </div>

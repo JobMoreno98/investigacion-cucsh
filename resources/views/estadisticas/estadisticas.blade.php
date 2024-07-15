@@ -18,7 +18,12 @@
                                             /
                                             {{ $total }}</a>
                                         @php
-                                            $progreso = ((int) $value * 100) / $total;
+                                            if ($total > 0) {
+                                                $progreso = ((int) $value * 100) / $total;
+                                            } else {
+                                                $progreso = 0;
+                                            }
+
                                         @endphp
                                         <div class="progress " role="progressbar" aria-label="{{ $key }}"
                                             aria-valuenow="{{ $progreso }}" aria-valuemin="0"
@@ -65,7 +70,6 @@
                                                 <div class="col-sm-12 col-md-2 ">
                                                     <a class="btn border-bottom"
                                                         href="{{ route('resultadosEvaluaciones', $key) }}">{{ $value }}</a>
-
                                                 </div>
                                             </div>
                                         </div>

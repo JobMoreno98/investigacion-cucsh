@@ -16,7 +16,7 @@
                             <th class="text-center">ID</th>
                             <th class="text-center">Folio</th>
                             <th class="text-center">Título</th>
-                            <th class="text-center">Proyecto extenso</th>
+                            <th class="text-center">Archvios</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -26,9 +26,15 @@
                                 <td>{{ $item->proyecto->id }}</td>
                                 <td>{{ $item->proyecto->ciclo->anio . '/' . $item->proyecto->folio }}</td>
                                 <td>{{ $item->proyecto->titulo_proyecto }}</td>
-                                <td class="text-center">
-                                    <a href="{{ asset('/storage/extenso/' . $item->proyecto->extenso) }}"
-                                        class=" btn btn-secondary btn-sm my-1" target="_blank">Ver proyecto extenso</a>
+                                <td class="text-center" style="width: 300px;">
+                                    <a href="{{ route('local.temp', ['id' => $item->proyecto->id, 'tipo' => 'extenso']) }}"
+                                        class=" btn btn-secondary btn-sm my-1" target="_blank">Proyecto</a>
+
+                                    <a href="{{ route('local.temp', ['id' => $item->proyecto->id, 'tipo' => 'cronograma']) }}"
+                                        class=" btn btn-primary btn-sm my-1" target="_blank">Cronograma</a>
+
+                                    <a href="{{ route('local.temp', ['id' => $item->proyecto->id, 'tipo' => 'completo']) }}"
+                                        class="btn  text-white btn-sm my-1" style="background:#9124a3;"target="_blank">Detalles</a>
                                 </td>
                                 <td style="width:150px;">
                                     @if (strcmp($item->dictamen, '-') == 0)

@@ -36,6 +36,10 @@
                                 <div class="col-sm-12 col-md-auto m-1"><a href="{{ route('datos.admin') }}"
                                         class="w-100 btn  text-decoration-none btn-primary">Datos del usuario</a>
                                 </div>
+
+                                <div class="col-sm-12 col-md-auto m-1"><a href="{{ route('cartas-confidencialidad.index') }}"
+                                    class="w-100 btn  text-decoration-none btn-primary">Cartas de confidencialidad de datos</a>
+                            </div>
                             </div>
                         </div>
                     </div>

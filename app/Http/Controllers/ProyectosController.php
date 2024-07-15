@@ -379,7 +379,7 @@ class ProyectosController extends Controller
             $nombre = str_replace('/', '_', $nombre);
             $nombre = str_replace(' ', '_', $nombre);
             Storage::disk('continuacion')->put($nombre, \File::get($archivo));
-            $proyecto->cronograma = $nombre;
+            $proyecto->resultados = $nombre;
         }
 
         if ($request->hasfile('anexos')) {

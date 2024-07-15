@@ -63,6 +63,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'cartas' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/cartas'),
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

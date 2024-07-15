@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\ciclos;
 use App\Models\datosGenerales;
 use App\Models\proyectos;
@@ -26,13 +27,13 @@ class User extends Controller
             ->pluck('total', 'role')->toArray();
 
         $total_s_role = ModelsUser::select('s_role', DB::raw('count(*) as total'))
-        ->where('s_role','!=',null)
+            ->where('s_role', '!=', null)
             ->groupBy('s_role')
-            ->pluck('total', 's_role')->toArray();    
+            ->pluck('total', 's_role')->toArray();
 
-        $totales = array_merge_recursive($total_s_role, $total_role) ;
+        $totales = array_merge_recursive($total_s_role, $total_role);
 
-        return view('usuarios.index', compact('users','totales'));
+        return view('usuarios.index', compact('users', 'totales'));
     }
 
     public function datos_generales()
@@ -59,12 +60,12 @@ class User extends Controller
             [
                 'email' => 'required|email|unique:users,email,' . Auth::user()->id,
                 'nombramiento' => 'required',
-                'cuerpo_academico'=> 'required',
-                'reconocimiento_sni'=> 'required',
-                'reconocimiento_promep'=> 'required',
-                'reconocimiento_proesde'=> 'required',
-                'departamento'=> 'required',
-                'division'=> 'required'
+                'cuerpo_academico' => 'required',
+                'reconocimiento_sni' => 'required',
+                'reconocimiento_promep' => 'required',
+                'reconocimiento_proesde' => 'required',
+                'departamento' => 'required',
+                'division' => 'required'
             ],
             $messages,
         );
@@ -153,7 +154,7 @@ class User extends Controller
     public function password($id)
     {
         $usuario = ModelsUser::find($id);
-        $contraseña = 'cucsh2023';
+        $contraseña = 'cucsh2024';
         $usuario->password = Hash::make($contraseña);
         $usuario->reseteo = 1;
         $usuario->update();
@@ -216,5 +217,16 @@ class User extends Controller
         return redirect()
             ->route('home')
             ->with('message', 'Sus datos se han actualizado correctamente');
+    }
+    public function all_resets_passwords()
+    {
+        $users = ModelsUser::all();
+
+        foreach ($users as $key => $value) {
+            $contraseña = 'cucsh2024';
+            $value->password = Hash::make($contraseña);
+            $value->update();
+        }
+        echo "FIN";
     }
 }

@@ -44,7 +44,7 @@
 <body>
     <footer id="footer">
         <p class="pie">
-            <span style="text-align: start;"><b>Folio: </b>{{ $proyecto->ciclo->anio }}/{{ $proyecto->id }}</span>
+            <span style="text-align: start;"><b>Folio: </b>{{ $proyecto->ciclo->anio }}/{{ $proyecto->folio }}</span>
             <span class="page">| Página </span>
         </p>
     </footer>
@@ -55,7 +55,7 @@
                 </p>
             </div>
             <h5 class="border-bottom mb-3 pb-3">Folio:
-                {{ $proyecto->ciclo->anio }}/{{ $proyecto->id }}
+                {{ $proyecto->ciclo->anio }}/{{ $proyecto->folio }}
                 <br /> Título: {{ $proyecto->titulo_proyecto }}
             </h5>
             <table class="table table-borderless">
