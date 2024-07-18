@@ -1,7 +1,13 @@
 @extends('adminlte::page')
 
+@section('title', 'Estadisticas')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">Loading</h4>
+@stop
+
 @section('css')
-    <link rel="stylesheet" href="{{asset('css/app.css')}}">
+    @include('layouts.head')
 @endsection
 
 @section('content')
@@ -66,7 +72,6 @@
                                 @foreach ($evaluados as $key => $value)
                                     <div class="col-sm-12 col-md-3 my-3">
                                         <div class="card h-100 w-100 mx-1">
-
                                             <div class="card-body row d-flex align-items-center">
                                                 <div class="col-sm-12 col-md-9">
                                                     <p class="border-end my-auto">{{ $key }}</p>
@@ -118,5 +123,5 @@
     </div>
 @endsection
 @section('js')
-    <script src="{{asset('js/app.js')}}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 @endsection
