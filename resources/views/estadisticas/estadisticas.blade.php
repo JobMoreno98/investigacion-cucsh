@@ -1,4 +1,8 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+
+@section('css')
+    <link rel="stylesheet" href="{{asset('css/app.css')}}">
+@endsection
 
 @section('content')
     <div class="container">
@@ -112,4 +116,7 @@
             @endif
         </div>
     </div>
+@endsection
+@section('js')
+    <script src="{{asset('js/app.js')}}"></script>
 @endsection

@@ -9,10 +9,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Traits\HasRoles;
+
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable,HasRoles ;
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -51,8 +54,7 @@ class User extends Authenticatable
     public function proyecto() {
         return $this->hasOne(proyectos::class);
     }
-    
-
-
-
+    public function adminlte_profile_url(){
+        return route('datos_generales');
+    }
 }

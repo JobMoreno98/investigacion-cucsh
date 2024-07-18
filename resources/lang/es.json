@@ -41,6 +41,7 @@
     "Invalid JSON was returned from the route.": "Se devolvió un JSON no válido desde la ruta.",
     "Invalid SSL Certificate": "Certificado SSL no válido",
     "Length Required": "Longitud requerida",
+    "Loading":"Cargando",
     "Locked": "Bloqueado",
     "Login": "Iniciar sesión",
     "Logout": "Finalizar sesión",

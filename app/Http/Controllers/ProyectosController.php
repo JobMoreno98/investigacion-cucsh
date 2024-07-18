@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
+use App\Models\datosGenerales;
 
 class ProyectosController extends Controller
 {
@@ -61,7 +62,6 @@ class ProyectosController extends Controller
                 ->where('ciclo_id', $ciclo->id)
                 ->where('user_id', Auth::user()->id)
                 ->get();
-
             return view('proyectos.index', compact('proyectos'));
         } else {
             return view('home')->with([
@@ -71,12 +71,20 @@ class ProyectosController extends Controller
     }
     public function create()
     {
+        if (auth()->user()->hasRole('investigador')) {
+            $pasa = datosGenerales::where('user_id', auth()->user()->id)->count();
+            if (!$pasa) {
+                alert()->info('Consideraciones', 'Antes de registrar un proyecto debes de registrar tus datos')->persistent(true, false);
+                return redirect()->route('datos_generales');
+            }
+        }
         $user = User::find(Auth::user()->id);
         $ciclo = ciclos::where('activo', 1)->first();
-        $folio = proyectos::select('id', 'folio')->where('ciclo_id', $ciclo->id)->where('activo', 1)
+        $folio = proyectos::select('id', 'folio')
+            ->where('ciclo_id', $ciclo->id)
+            ->where('activo', 1)
             ->latest()
             ->first();
-
 
         if (!isset($folio->folio)) {
             $id = 0;
@@ -99,8 +107,6 @@ class ProyectosController extends Controller
                 ]);
         }
 
-
-
         $request->validate(
             [
                 'titulo' => 'required',
@@ -120,7 +126,6 @@ class ProyectosController extends Controller
             $this->messages,
         );
 
-
         $proyecto = new proyectos();
 
         $proyecto->user_id = Auth::user()->id;
@@ -129,7 +134,7 @@ class ProyectosController extends Controller
         $proyecto->tipo_registro = $request->tipo_registro;
         $proyecto->tipo_proyecto = $request->tipo_proyecto;
         $proyecto->sector = $request->sector;
-        $proyecto->folio = explode("/", $request->folio)[1];
+        $proyecto->folio = explode('/', $request->folio)[1];
         $proyecto->titulo_proyecto = $request->titulo;
         $proyecto->fecha_inicio = $request->fecha_inicio;
         $proyecto->fecha_fin = $request->fecha_fin;
@@ -161,7 +166,7 @@ class ProyectosController extends Controller
         }
 
         if (strcmp($request->vinculacion_redes[0], 'Si') == 0) {
-            $proyecto->vinculacion_redes = "Si";
+            $proyecto->vinculacion_redes = 'Si';
 
             $messages = [
                 'r_nombre.required' => 'Favor de ingresar los nombres de las redes de investigación',
@@ -232,23 +237,22 @@ class ProyectosController extends Controller
                 RedesInvestigacion::create([
                     'nombre' => $request->r_nombre[$i],
                     'nivel' => $request->r_tipo[$i],
-                    'proyecto_id' => $proyecto->id
+                    'proyecto_id' => $proyecto->id,
                 ]);
             }
         }
 
-
         Metodologias::create([
-            'metodologia' =>  $request->metodologia,
-            'objetivos' =>  $request->objetivos,
-            'hipotesis' =>  $request->hipotesis,
-            'criterios_eticos' =>  $request->criterios_eticos,
-            'referencias' =>  $request->referencias,
+            'metodologia' => $request->metodologia,
+            'objetivos' => $request->objetivos,
+            'hipotesis' => $request->hipotesis,
+            'criterios_eticos' => $request->criterios_eticos,
+            'referencias' => $request->referencias,
             'proyecto_id' => $proyecto->id,
-            'anexos' => $anexos
+            'anexos' => $anexos,
         ]);
 
-        Alert::success("Exito", 'El proyecto se registro exitosamente');
+        Alert::success('Exito', 'El proyecto se registro exitosamente');
         return redirect()->route('home');
     }
     public function show(proyectos $proyecto)
@@ -270,7 +274,9 @@ class ProyectosController extends Controller
             }
             $proyecto->monto_total = $total;
 
-            $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)->where('activo', 1)->get();
+            $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)
+                ->where('activo', 1)
+                ->get();
             $metodologias = Metodologias::where('proyecto_id', $proyecto->id)->first();
 
             return view('proyectos.show', compact('proyecto', 'redes', 'metodologias'));
@@ -282,7 +288,9 @@ class ProyectosController extends Controller
     {
         $proyecto->personal = explode('<separador>', $proyecto->personal);
         $proyecto->divulgacion = explode('<separador>', $proyecto->divulgacion);
-        $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)->where('activo', 1)->get();
+        $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)
+            ->where('activo', 1)
+            ->get();
         $metodologias = Metodologias::where('proyecto_id', $proyecto->id)->first();
         return view('proyectos.edit', compact('proyecto', 'redes', 'metodologias'));
     }
@@ -352,7 +360,7 @@ class ProyectosController extends Controller
         }
 
         if (strcmp($request->vinculacion_redes[0], 'Si') == 0) {
-            $proyecto->vinculacion_redes = "Si";
+            $proyecto->vinculacion_redes = 'Si';
         }
 
         if ($request->hasfile('extenso')) {
@@ -406,23 +414,22 @@ class ProyectosController extends Controller
                         'nombre' => $request->r_nombre[$i],
                         'nivel' => $request->r_tipo[$i],
                         'proyecto_id' => $proyecto->id,
-                        'activo' => 1
-                    ]
-                )->id
+                        'activo' => 1,
+                    ],
+                )->id,
             );
         }
-
 
         // se desactivan todos los registros que no son validos
         RedesInvestigacion::whereNotIn('id', $redesTemp)->update(['activo' => '0']);
 
-        Metodologias::where('proyecto_id',$proyecto->id)->update([
-            'metodologia' =>  $request->metodologia,
-            'objetivos' =>  $request->objetivos,
-            'hipotesis' =>  $request->hipotesis,
-            'criterios_eticos' =>  $request->criterios_eticos,
-            'referencias' =>  $request->referencias,
-            'anexos' => $anexos
+        Metodologias::where('proyecto_id', $proyecto->id)->update([
+            'metodologia' => $request->metodologia,
+            'objetivos' => $request->objetivos,
+            'hipotesis' => $request->hipotesis,
+            'criterios_eticos' => $request->criterios_eticos,
+            'referencias' => $request->referencias,
+            'anexos' => $anexos,
         ]);
 
         Alert::success('Exito', 'El proyecto se modifico exitosamente');
@@ -437,9 +444,8 @@ class ProyectosController extends Controller
             $proyecto->definitivo = 0;
         }
         $proyecto->update();
-        Alert::success("Exito", 'El proyecto se envio a definitivo correctamente');
-        return redirect()
-            ->route('home');
+        Alert::success('Exito', 'El proyecto se envio a definitivo correctamente');
+        return redirect()->route('home');
     }
     public function imprimirProyecto($id)
     {
@@ -455,10 +461,12 @@ class ProyectosController extends Controller
             $total = $total + $proyecto->recursos->$numero;
         }
         $proyecto->monto_total = $total;
-        $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)->where('activo', 1)->get();
+        $redes = RedesInvestigacion::where('proyecto_id', $proyecto->id)
+            ->where('activo', 1)
+            ->get();
         $metodologias = Metodologias::where('proyecto_id', $proyecto->id)->first();
 
-        $html = view('proyectos.imprimirPDF', compact('proyecto','redes','metodologias'));
+        $html = view('proyectos.imprimirPDF', compact('proyecto', 'redes', 'metodologias'));
         $pdf = FacadePdf::loadHTML($html->render());
         return $pdf->stream('formatoProyecto.pdf');
     }
@@ -494,30 +502,33 @@ class ProyectosController extends Controller
         $evaluados = evaluaciones::select('dictamen', DB::raw('count(*) as Total_registros'))
             ->where('definitivo', 1)
             ->where('ciclo_id', $ciclo->id)
-            ->groupBy('dictamen')->orderBy('Total_registros', 'desc')
+            ->groupBy('dictamen')
+            ->orderBy('Total_registros', 'desc')
             ->pluck('Total_registros', 'dictamen');
 
         // Aceptados Proyectos nuevos // Aprobados Proyectos continuacion  // No aceptados
         //dd($evaluados );
 
-
         // Obtener las cantidades de cada uno de los registros
         $tipo_registro = proyectos::select('tipo_registro', DB::raw('count(*) as Total_registros'))
             ->where('activo', 1)
             ->where('ciclo_id', $ciclo->id)
-            ->groupBy('tipo_registro')->orderBy('Total_registros', 'desc')
+            ->groupBy('tipo_registro')
+            ->orderBy('Total_registros', 'desc')
             ->pluck('Total_registros', 'tipo_registro');
 
         $tipo_proyecto = proyectos::select('tipo_proyecto', DB::raw('count(*) as Total_registros'))
             ->where('activo', 1)
             ->where('ciclo_id', $ciclo->id)
-            ->groupBy('tipo_proyecto')->orderBy('Total_registros', 'desc')
+            ->groupBy('tipo_proyecto')
+            ->orderBy('Total_registros', 'desc')
             ->pluck('Total_registros', 'tipo_proyecto');
 
         $sector = proyectos::select('sector', DB::raw('count(*) as Total_registros'), 'ciclo_id')
             ->where('activo', 1)
             ->where('ciclo_id', $ciclo->id)
-            ->groupBy('sector')->orderBy('Total_registros', 'desc')
+            ->groupBy('sector')
+            ->orderBy('Total_registros', 'desc')
             ->pluck('Total_registros', 'sector');
 
         $recursos = proyectos::where('activo', 1)
@@ -534,13 +545,11 @@ class ProyectosController extends Controller
             ->count();
 
         $definitivo['total'] = $definitivos;
-        if ($total>0) {
+        if ($total > 0) {
             $definitivo['progreso'] = ($definitivos * 100) / $total;
-        }else{
-            $definitivo['progreso'] =0;
+        } else {
+            $definitivo['progreso'] = 0;
         }
-        
-
 
         $arreglo = ['Apoyo económico' => $apoyo, 'Tipo registro' => $tipo_registro->all(), 'Tipo proyecto' => $tipo_proyecto, 'Sector' => $sector];
 
@@ -588,7 +597,7 @@ class ProyectosController extends Controller
         $columnas = [['target' => 0, 'visible' => false]];
 
         if (strcmp($valor, 'Con apoyo') == 0) {
-            return $this->recursos($proyectos,  $columnas, $titulos, $tipo, $valor);
+            return $this->recursos($proyectos, $columnas, $titulos, $tipo, $valor);
         }
 
         if (strcmp($valor, 'Sin apoyo') == 0) {

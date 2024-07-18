@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ciclos;
-use App\Models\proyectos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Modulos;
+use Illuminate\Support\Arr;
 
 class HomeController extends Controller
 {
@@ -26,13 +26,15 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $ciclo = ciclos::where('activo', 1)->latest()->first();
-        if (Auth::user()->role  == 'investigador' || Auth::user()->s_role == 'investigador') {
-            $proyectos = proyectos::where('user_id', Auth::user()->id)->where('ciclo_id', $ciclo->id)->where('activo', 1)->count();
-        } else {
-            $proyectos = 0;
-        }
+        $user = Auth::user();
+        $permissionNames = $user->getPermissionsViaRoles();
+        $mapped = Arr::map($permissionNames->pluck('name')->toArray(), function (string $value, string $key) {
+            return explode('#', $value)[0];
+        });
+        $nombres = array_values(array_unique($mapped));
 
-        return view('home', compact('ciclo', 'proyectos'));
+        $modulos = Modulos::with('enlaces')->select('id', 'nombre', 'permiso', 'icono', 'color')->whereIn('permiso', $nombres)->orderBy('nombre')->get();
+        
+        return view('home', compact('modulos'));
     }
 }

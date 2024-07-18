@@ -14,26 +14,14 @@ use Illuminate\Support\Facades\Validator;
 use Mail;
 use Illuminate\Support\Facades\DB;
 use App\Mail\Password_reset;
+use Spatie\Permission\Models\Role;
 
 class User extends Controller
 {
     public function index()
     {
-        $users = ModelsUser::with('datos')
-            ->where('id', '!=', Auth::user()->id)
-            ->get();
-        $total_role = ModelsUser::select('role', DB::raw('count(*) as total'))
-            ->groupBy('role')
-            ->pluck('total', 'role')->toArray();
-
-        $total_s_role = ModelsUser::select('s_role', DB::raw('count(*) as total'))
-            ->where('s_role', '!=', null)
-            ->groupBy('s_role')
-            ->pluck('total', 's_role')->toArray();
-
-        $totales = array_merge_recursive($total_s_role, $total_role);
-
-        return view('usuarios.index', compact('users', 'totales'));
+        $users = ModelsUser::all();
+        return view('admin.usuarios.index', compact('users'));
     }
 
     public function datos_generales()
@@ -54,7 +42,7 @@ class User extends Controller
             'reconocimiento_proesde.required' => 'Favor de ingresar tu Reconocimiento PROESDE',
             'departamento.required' => 'Favor de ingresar tu Departamento',
             'division.required' => 'Favor de ingresar tu División',
-            'email.ends_with' => 'El correo debe ser @academicos.udg.mx'
+            'email.ends_with' => 'El correo debe ser @academicos.udg.mx',
         ];
         $request->validate(
             [
@@ -65,7 +53,7 @@ class User extends Controller
                 'reconocimiento_promep' => 'required',
                 'reconocimiento_proesde' => 'required',
                 'departamento' => 'required',
-                'division' => 'required'
+                'division' => 'required',
             ],
             $messages,
         );
@@ -92,9 +80,7 @@ class User extends Controller
                 $user->password = Hash::make($request->password);
                 $user->reseteo = 0;
             } else {
-                return redirect()
-                    ->route('datos_generales', $user)
-                    ->withErrors($validator);
+                return redirect()->route('datos_generales', $user)->withErrors($validator);
             }
         }
         $datos = datosGenerales::where('user_id', $user->id)->first();
@@ -122,9 +108,7 @@ class User extends Controller
 
         $user->update();
 
-        return redirect()
-            ->route('home')
-            ->with('message', 'Sus datos se han actualizado correctamente');
+        return redirect()->route('home')->with('message', 'Sus datos se han actualizado correctamente');
     }
     public function role($id)
     {
@@ -207,16 +191,12 @@ class User extends Controller
                 $user->password = Hash::make($request->password);
                 $user->reseteo = 0;
             } else {
-                return redirect()
-                    ->route('datos.admin')
-                    ->withErrors($validator);
+                return redirect()->route('datos.admin')->withErrors($validator);
             }
         }
         $user->update();
 
-        return redirect()
-            ->route('home')
-            ->with('message', 'Sus datos se han actualizado correctamente');
+        return redirect()->route('home')->with('message', 'Sus datos se han actualizado correctamente');
     }
     public function all_resets_passwords()
     {
@@ -227,6 +207,47 @@ class User extends Controller
             $value->password = Hash::make($contraseña);
             $value->update();
         }
-        echo "FIN";
+        echo 'FIN';
+    }
+    public function edit($id)
+    {
+        //$usuario = User::where('id', $id)->get();
+        $roles = [];
+        $usuario = ModelsUser::leftjoin('model_has_roles', 'model_has_roles.model_id', 'users.id')
+            ->where('users.id', $id)
+            //->where('model_has_roles.model_type','App\Models\User')
+            ->first();
+        $roles[] = ['id' => 0, 'name' => 'Seleccione un Rol', 'selected' => ''];
+        foreach (Role::orderBy('name')->get() as $rol) {
+            $elemento = [
+                'id' => $rol->id,
+                'name' => $rol->name,
+                'selected' => '',
+            ];
+            if (isset($usuario->role_id)) {
+                if ($usuario->role_id == $rol->id) {
+                    $elemento['selected'] = 'selected';
+                }
+            }
+
+            $roles[] = $elemento;
+        }
+        return view('admin.usuarios.edit')->with('usuario', $usuario)->with('roles', $roles);
+    }
+    public function create()
+    {
+        return view('usuarios.create');
+    }
+
+    public function update_user(Request $request, $id)
+    {
+        $user = ModelsUser::findOrFail($id);
+        $user->email = $request['email'];
+        $user->name = $request['name'];
+        $user->role = $request['rol'];
+        $user->update();
+        $user->syncRoles(); # Se borran todos los anteriores
+        $user->syncRoles([$request['rol']]); # se asignan todos lo que esten en el array
+        return redirect()->route('usuarios.index');
     }
 }

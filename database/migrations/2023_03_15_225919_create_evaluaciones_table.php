@@ -16,6 +16,7 @@ class CreateEvaluacionesTable extends Migration
         Schema::create('evaluaciones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('evaluador_id')->constrained('users');
             $table->foreignId('proyecto_id')->constrained('proyectos');
             $table->timestamps();
         });
