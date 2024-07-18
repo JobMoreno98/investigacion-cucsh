@@ -18,6 +18,9 @@ class CreateEvaluacionesTable extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('evaluador_id')->constrained('users');
             $table->foreignId('proyecto_id')->constrained('proyectos');
+            $table->foreignId('ciclo_id')->constrained('ciclos');
+            $table->string('dictamen',10);
+            $table->tinyInteger('activo');
             $table->timestamps();
         });
     }

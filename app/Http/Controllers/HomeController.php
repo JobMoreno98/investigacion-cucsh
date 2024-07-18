@@ -34,7 +34,9 @@ class HomeController extends Controller
         $nombres = array_values(array_unique($mapped));
 
         $modulos = Modulos::with('enlaces')->select('id', 'nombre', 'permiso', 'icono', 'color')->whereIn('permiso', $nombres)->orderBy('nombre')->get();
-        
+
+
+
         return view('home', compact('modulos'));
     }
 }

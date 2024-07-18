@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('nombre',100);
             $table->string('permiso',100);
-            $table->string('color');
-            $table->string('icono');
+            $table->string('color')->default('#e2e2e2');
+            $table->string('icono')->default('info');
             $table->timestamps();
         });
     }
