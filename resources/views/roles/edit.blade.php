@@ -1,5 +1,5 @@
 @extends('adminlte::page')
-@section('title', 'Préstamos edit')
+@section('title', 'Editar Rol')
 @section('content')
     <div class="container">
         @if (Auth::check() )

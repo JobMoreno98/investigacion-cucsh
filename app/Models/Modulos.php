@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Modulos extends Model
 {
     use HasFactory;
-    protected $fillable = ['nombre','permiso','color','icono'];
+    protected $fillable = ['nombre','permiso','color','icono','orden'];
     public function enlaces(): HasMany
     {
         return $this->hasMany(EnlaceModulo::class, 'modulo_id', 'id');

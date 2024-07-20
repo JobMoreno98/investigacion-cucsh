@@ -9,6 +9,7 @@
 @section('css')
     @include('layouts.head')
 @endsection
+
 @section('content')
     <div class="container">
         @if (Auth::check())
@@ -31,7 +32,7 @@
                     </div>
                     <div class="mx-1">
                         <input type="text" placeholder="Nombre permiso" name="nombre_permiso"
-                            value="{{ $modulo->nombre_permiso }}" class="form-control">
+                            value="{{ $modulo->permiso }}" class="form-control">
                     </div>
                     <div class="mx-1">
                         <input type="text" placeholder="Icono" name="icono" value="{{ $modulo->icono }}"
@@ -56,6 +57,9 @@
 
                                         <input type="text" class="form-control col-md-3 m-1" name="enlaces[]"
                                             value="{{ $item->enlace }}">
+
+                                        <input type="text" class="form-control col-md-3 m-1" name="permisos[]"
+                                            value="{{ $item->permiso }}">
 
                                         <input type="text" class="form-control col-md-3 m-1" name="parametros[]"
                                             value="{{ $item->parametro }}">
@@ -97,7 +101,7 @@
         var cont = 0;
         $('.clonar').click(function() {
             let form = document.getElementById('formulario');
-            let arreglo = ['titulo[]', 'enlaces[]', 'parametros[]', 'estilos[]'];
+            let arreglo = ['titulo[]', 'enlaces[]', 'permisos[]', 'parametros[]', 'estilos[]'];
 
             var div = document.createElement("div");
             var span = document.createElement("span");

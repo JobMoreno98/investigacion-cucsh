@@ -12,6 +12,5 @@ class CartaConfidencialidadController extends Controller
         $anio = date('Y');
         $cartas = CartaConfidencialidad::with('user')->where('anio', $anio)->get();
         return view('cartas.index',compact('cartas'));
-        return $cartas;
     }
 }

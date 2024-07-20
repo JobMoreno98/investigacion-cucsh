@@ -8,7 +8,7 @@ $(document).ready(function () {
             { data: 'permiso' },
             { data: 'input' }
         ],
-        "pageLength": 5,
+        "pageLength": 10,
         "order": [
             [0, "asc"]
         ],

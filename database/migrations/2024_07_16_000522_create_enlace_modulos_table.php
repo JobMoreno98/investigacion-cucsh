@@ -17,8 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('titulo',100);
             $table->string('enlace',100);
-            $table->string('parametro',100);
-            $table->string('estilo');
+            $table->string('parametro',100)->nullable();
+            $table->string('estilo')->default('btn btn-sm m-1 btn-outline-success');
+            $table->string('permiso',100);
             $table->unsignedBigInteger('modulo_id')->nullable();
             $table->foreign('modulo_id')->references('id')->on('modulos');
             $table->timestamps();

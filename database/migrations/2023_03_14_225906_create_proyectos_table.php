@@ -41,6 +41,9 @@ class CreateProyectosTable extends Migration
 
             $table->string('anexo')->default('No aplica');
             $table->string('cronograma')->default('No aplica');
+            $table->text('justificacion');
+            $table->string('enfoque');
+            $table->string('extenso');
             
             $table->tinyInteger('definitivo')->default('0');
             $table->tinyInteger('activo')->default('1');

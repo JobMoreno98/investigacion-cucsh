@@ -1,5 +1,5 @@
 @extends('adminlte::page')
-@section('title', 'Reslacionar roles')
+@section('title', 'Relacionar rol')
 @section('content')
     <div class="container">
         @if (Auth::check())
@@ -39,10 +39,11 @@
         @endif
     </div>
 @section('js')
-    <script type="text/javascript" src="{{ asset('js/usuarios/relatedPermission.js') }}"></script>
     <script type="text/javascript">
         var data = @json($permisos);
     </script>
+    <script type="text/javascript" src="{{ asset('js/usuarios/relatedPermission.js') }}"></script>
+
 @stop
 
 @endsection

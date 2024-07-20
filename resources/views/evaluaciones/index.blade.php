@@ -1,5 +1,14 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+@section('title', 'Asignaciones')
 
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">Loading</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+@endsection
 @section('content')
     <div class="container-fluid p-5">
         <div class="row my-2 justify-content-center">
@@ -46,7 +55,8 @@
                                         @if (strcmp($item->evaluacion->dictamen, '-') == 0)
                                             <p class="text-center">Aun no ha sido evaluado
                                                 <a class="btn p-0 m-0 w-100 btn-primary"
-                                                    href="{{ route('evaluaciones.show', $item->id) }}">Asiganar evaluador</a>
+                                                    href="{{ route('evaluaciones.show', $item->id) }}">Asiganar
+                                                    evaluador</a>
                                             </p>
                                         @else
                                             @if ($item->evaluacion->definitivo == 0)
@@ -74,6 +84,9 @@
             </div>
         </div>
     </div>
+
+@endsection
+@section('js')
     <script>
         $(document).ready(function() {
             $('#myTable').DataTable({

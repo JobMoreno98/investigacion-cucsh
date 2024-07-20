@@ -70,6 +70,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'fotos_perfil' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/fotos_perfil'),
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

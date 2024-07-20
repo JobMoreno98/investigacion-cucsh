@@ -403,25 +403,26 @@ class ProyectosController extends Controller
 
         $proyecto->update();
         //Se genera un arreglo vacio que contendra los registros que se gaurdaron
-        $redesTemp = [];
-        for ($i = 0; $i < count($request->r_nombre); $i++) {
-            // Se añaden los registros que actualmente son validos.
-            array_push(
-                $redesTemp,
-                RedesInvestigacion::updateOrCreate(
-                    ['nombre' => $request->r_nombre[$i], 'proyecto_id' => $proyecto->id],
-                    [
-                        'nombre' => $request->r_nombre[$i],
-                        'nivel' => $request->r_tipo[$i],
-                        'proyecto_id' => $proyecto->id,
-                        'activo' => 1,
-                    ],
-                )->id,
-            );
+        if (isset($request->r_nombre)) {
+            $redesTemp = [];
+            for ($i = 0; $i < count($request->r_nombre); $i++) {
+                // Se añaden los registros que actualmente son validos.
+                array_push(
+                    $redesTemp,
+                    RedesInvestigacion::updateOrCreate(
+                        ['nombre' => $request->r_nombre[$i], 'proyecto_id' => $proyecto->id],
+                        [
+                            'nombre' => $request->r_nombre[$i],
+                            'nivel' => $request->r_tipo[$i],
+                            'proyecto_id' => $proyecto->id,
+                            'activo' => 1,
+                        ],
+                    )->id,
+                );
+            }
+            // se desactivan todos los registros que no son validos
+            RedesInvestigacion::whereNotIn('id', $redesTemp)->update(['activo' => '0']);
         }
-
-        // se desactivan todos los registros que no son validos
-        RedesInvestigacion::whereNotIn('id', $redesTemp)->update(['activo' => '0']);
 
         Metodologias::where('proyecto_id', $proyecto->id)->update([
             'metodologia' => $request->metodologia,

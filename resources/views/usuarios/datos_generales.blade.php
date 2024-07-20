@@ -1,4 +1,10 @@
 @extends('adminlte::page')
+@section('title', 'Datos Generales')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">Loading</h4>
+@stop
+
 @section('css')
     @include('layouts.head')
 @endsection
@@ -20,14 +26,6 @@
             <form action="{{ route('usuarios.update', Auth::user()->id) }}" method="post" class="row justify-content-center">
                 @csrf
                 @method('PUT')
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label" for="">Nombre</label>
-                    <input class="form-control" type="text" name="name" id="" value="{{ $user->name }}">
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label" for="">Correo</label>
-                    <input class="form-control" type="text" name="email" id="" value="{{ $user->email }}">
-                </div>
                 <div class="col-sm-12 col-md-6">
                     <label class="form-label" for="">Nombramiento</label>
                     <input class="form-control" type="text" name="nombramiento" id=""
@@ -155,31 +153,6 @@
                         </option>
                     </select>
                 </div>
-
-
-                <div class="col-sm-12 mt-3">
-                    <h4>Cambio de contraseña</h4>
-                    <hr class="mt-3 border border-dark border-1 opacity-50">
-                    <a href=""></a>
-                </div>
-
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label" for="">Contraseña nueva</label>
-                    <input class="form-control" type="password" name="password" id="">
-                    @error('password')
-                        <small>{{ $message }}</small>
-                    @enderror
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label" for="">Confirmar contraseña</label>
-                    <input class="form-control" type="password" name="password_confirmation" id="">
-                    @error('password_confirmation')
-                        <small>{{ $message }}</small>
-                    @enderror
-                </div>
-
-
-
                 <div class=" col-sm-12 col-md-2 mt-2">
                     <button type="submit" class="btn btn-success w-100">Guardar</button>
                 </div>
@@ -189,5 +162,5 @@
     </div>
 @endsection
 @section('js')
-    @include('sweetalert::alert')
+    @include('layouts.scripts')
 @endsection

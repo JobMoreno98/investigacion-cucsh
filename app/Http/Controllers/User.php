@@ -15,6 +15,7 @@ use Mail;
 use Illuminate\Support\Facades\DB;
 use App\Mail\Password_reset;
 use Spatie\Permission\Models\Role;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class User extends Controller
 {
@@ -46,7 +47,6 @@ class User extends Controller
         ];
         $request->validate(
             [
-                'email' => 'required|email|unique:users,email,' . Auth::user()->id,
                 'nombramiento' => 'required',
                 'cuerpo_academico' => 'required',
                 'reconocimiento_sni' => 'required',
@@ -60,29 +60,6 @@ class User extends Controller
 
         //return $request->nombramiento;
         $user = ModelsUser::find($user);
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-
-        if (isset($request->password)) {
-            $rules = [
-                'password' => 'required|confirmed|min:6|max:18',
-            ];
-
-            $messages = [
-                'password.required' => 'El campo es requerido',
-                'password.confirmed' => 'Las contraseñas no coinciden',
-                'password.min' => 'El mínimo permitido son 6 caracteres',
-                'password.max' => 'El máximo permitido son 18 caracteres',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if (!$validator->fails()) {
-                $user->password = Hash::make($request->password);
-                $user->reseteo = 0;
-            } else {
-                return redirect()->route('datos_generales', $user)->withErrors($validator);
-            }
-        }
         $datos = datosGenerales::where('user_id', $user->id)->first();
         if ($datos) {
             $datos->nombramiento = $request->nombramiento;
@@ -109,30 +86,6 @@ class User extends Controller
         $user->update();
 
         return redirect()->route('home')->with('message', 'Sus datos se han actualizado correctamente');
-    }
-    public function role($id)
-    {
-        $usuario = ModelsUser::find($id);
-        return view('admin.usuarios.edit', compact('usuario'));
-    }
-
-    public function usuario_update(Request $request, $id)
-    {
-        $request->validate([
-            'rol' => 'required',
-        ]);
-
-        $usuario = ModelsUser::find($id);
-        $usuario->role = $request->rol;
-
-        if (strcmp($request->s_rol, 'ninguno') == 0) {
-            $usuario->s_role = null;
-        }
-        if (strcmp($request->s_rol, 'ninguno') != 0) {
-            $usuario->s_role = $request->s_rol;
-        }
-        $usuario->update();
-        return redirect()->route('usuarios.index');
     }
 
     public function password($id)
@@ -217,37 +170,81 @@ class User extends Controller
             ->where('users.id', $id)
             //->where('model_has_roles.model_type','App\Models\User')
             ->first();
-        $roles[] = ['id' => 0, 'name' => 'Seleccione un Rol', 'selected' => ''];
-        foreach (Role::orderBy('name')->get() as $rol) {
-            $elemento = [
-                'id' => $rol->id,
-                'name' => $rol->name,
-                'selected' => '',
-            ];
-            if (isset($usuario->role_id)) {
-                if ($usuario->role_id == $rol->id) {
-                    $elemento['selected'] = 'selected';
+        if (Auth::user()->hasRole('admin')) {
+            $roles[] = ['id' => 0, 'name' => 'Seleccione un Rol', 'selected' => ''];
+            foreach (Role::orderBy('name')->get() as $rol) {
+                $elemento = [
+                    'id' => $rol->id,
+                    'name' => $rol->name,
+                    'selected' => '',
+                ];
+                if (isset($usuario->role_id)) {
+                    if ($usuario->role_id == $rol->id) {
+                        $elemento['selected'] = 'selected';
+                    }
                 }
-            }
 
-            $roles[] = $elemento;
+                $roles[] = $elemento;
+            }
+            return view('admin.usuarios.edit')->with('usuario', $usuario)->with('roles', $roles);
         }
-        return view('admin.usuarios.edit')->with('usuario', $usuario)->with('roles', $roles);
+        return view('admin.usuarios.edit')->with('usuario', $usuario);
     }
     public function create()
     {
-        return view('usuarios.create');
+        return view('admin.usuarios.create');
     }
 
     public function update_user(Request $request, $id)
     {
         $user = ModelsUser::findOrFail($id);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+
         $user->email = $request['email'];
         $user->name = $request['name'];
-        $user->role = $request['rol'];
+        if (isset($request->password)) {
+            $rules = [
+                'password' => 'required|confirmed|min:6|max:18',
+            ];
+
+            $messages = [
+                'password.required' => 'El campo es requerido',
+                'password.confirmed' => 'Las contraseñas no coinciden',
+                'password.min' => 'El mínimo permitido son 6 caracteres',
+                'password.max' => 'El máximo permitido son 18 caracteres',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if (!$validator->fails()) {
+                $user->password = Hash::make($request->password);
+                $user->reseteo = 0;
+            } else {
+                return redirect()
+                    ->route('usuario.edit', $user->id)
+                    ->withErrors($validator);
+            }
+        }
+
+        if ($request->hasfile('foto')) {
+            $archivo = $request->file('foto');
+            $nombre = $user->id . '_' . $user->name . '.jpg';
+            $nombre = str_replace('/', '_', $nombre);
+            $nombre = str_replace(' ', '_', $nombre);
+            \Storage::disk('fotos_perfil')->put($nombre, \File::get($archivo));
+            $user->foto = $nombre;
+        }
+
+        if (Auth::user()->hasRole('admin')) {
+            $user->role = $request['rol'];
+            $user->update();
+            $user->syncRoles(); # Se borran todos los anteriores
+            $user->syncRoles([$request['rol']]); # se asignan todos lo que esten en el array
+            return redirect()->route('usuarios.index');
+        }
         $user->update();
-        $user->syncRoles(); # Se borran todos los anteriores
-        $user->syncRoles([$request['rol']]); # se asignan todos lo que esten en el array
-        return redirect()->route('usuarios.index');
+        Alert::success('EXITO', 'Se guardo tu información');
+        return redirect()->route('home');
     }
 }

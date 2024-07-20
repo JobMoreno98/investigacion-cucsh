@@ -1,4 +1,12 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">Loading</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+@endsection
 
 @section('content')
     <div class="container">
@@ -12,50 +20,10 @@
             </div>
         @endif
         <div class="row justify-content-center">
-            <h3>Datos Generales</h3>
-            <hr>
             <form action="{{ route('proyectos.update', $proyecto->id) }}" method="post" class="row  justify-content-center"
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <div class="row p-2 m-1 justify-content-center">
-                    <div class="col-sm-12 col-md-6">
-                        Nombre responsable :<br> {{ $proyecto->user->name }}
-                    </div>
-                    <div class="col-sm-12 col-md-4">
-                        Correo :<br> {{ $proyecto->user->email }}
-                    </div>
-                    <div class="col-sm-12 col-md-2">
-                        Año : {{ $proyecto->ciclo->anio }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Nombramiento :<br> {{ $proyecto->user->datos->nombramiento }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Cuerpo Academico :<br> {{ $proyecto->user->datos->cuerpo_academico }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento S.N.I :<br> {{ $proyecto->user->datos->reconocimiento_sni }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento PROMEP :<br> {{ $proyecto->user->datos->reconocimiento_promep }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento PROESDE :<br> {{ $proyecto->user->datos->reconocimiento_proesde }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-6">
-                        Departamento :<br> {{ $proyecto->user->datos->departamento }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-6">
-                        División :<br> {{ $proyecto->user->datos->division }}
-                    </div>
-                </div>
-                <hr>
                 @include('proyectos.resumen')
 
                 @include('proyectos.metodologia')
@@ -81,7 +49,8 @@
                     </div>
 
                     <div class="col-md-6 p-2 ">
-                        <label class="form-label" for="">Recursos concurrentes en caso de aplciar al proyecto a nivel</label>
+                        <label class="form-label" for="">Recursos concurrentes en caso de aplciar al proyecto a
+                            nivel</label>
                         <select class="form-control" name="recursos_concurrentes" id="recursos_concurrentes">
                             <option value="{{ $proyecto->recursos_concurrentes }}" selected>
                                 {{ $proyecto->recursos_concurrentes }}</option>
@@ -252,9 +221,9 @@
 
                     <div class="col-sm-12 col-md-4">
                         <label class="form-label" for="extenso">Proyecto en extenso</label>
-                        <input accept=".pdf" class="form-control" type="file" name="extenso" >
+                        <input accept=".pdf" class="form-control" type="file" name="extenso">
                         <label class="form-label" for="resultados">Informe de resultados</label>
-                        <input accept=".pdf" class="form-control" type="file" name="resultados" >
+                        <input accept=".pdf" class="form-control" type="file" name="resultados">
                     </div>
 
                 </div>
@@ -308,6 +277,7 @@
 @endsection
 
 @section('js')
+    @include('layouts.scripts')
     @include('sweetalert::alert')
     <script src="{{ asset('js/addSelect.js') }}"></script>
 @endsection

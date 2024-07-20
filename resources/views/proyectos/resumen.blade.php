@@ -29,7 +29,7 @@
         <select class="form-control" name="tipo_registro" id="tipo_registro" required
             value="{{ isset($proyecto->tipo_registro) ? $proyecto->tipo_registro : old('tipo_registro') }}">
             <option {{ !isset($proyecto->tipo_proyecto) ? 'selected' : '' }} disabled>Elegir una opción</option>
-            
+
             <option
                 {{ isset($proyecto->tipo_proyecto) ? (strcmp('Proyecto nuevo', $proyecto->tipo_proyecto) == 0 ? 'selected' : '') : '' }}
                 value="Proyecto nuevo">Proyecto nuevo</option>

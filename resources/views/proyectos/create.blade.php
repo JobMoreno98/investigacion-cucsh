@@ -1,17 +1,15 @@
 @extends('adminlte::page')
+
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">Loading</h4>
+@stop
+
 @section('css')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="{{ asset('js/tinymce/tinymce.js') }}"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea', // change this value according to your HTML
-            license_key: 'gpl'
-        });
-    </script>
+    @include('layouts.head')
 @endsection
 @section('content')
-    <div class="container-fluid" onload="alerta()">
+    <div class="container-fluid">
         @if ($errors->any())
             <div class="alert alert-danger ">
                 @foreach ($errors->all() as $error)
@@ -20,49 +18,8 @@
             </div>
         @endif
         <div class="row justify-content-center">
-            <h3>Datos Generales</h3>
-            <hr>
             <form action="{{ route('proyectos.store') }}" method="post" class="row" enctype="multipart/form-data">
                 @csrf
-                <div class="row p-2 m-1 justify-content-center">
-                    <div class="col-sm-12 col-md-6">
-                        Nombre responsable :<br> {{ $user->name }}
-                    </div>
-                    <div class="col-sm-12 col-md-4">
-                        Correo :<br> {{ $user->email }}
-                    </div>
-                    <div class="col-sm-12 col-md-2">
-                        Año : {{ $ciclo->anio }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Nombramiento :<br> {{ $user->datos->nombramiento }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Cuerpo Academico :<br> {{ $user->datos->cuerpo_academico }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento S.N.I :<br> {{ $user->datos->reconocimiento_sni }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento PROMEP :<br> {{ $user->datos->reconocimiento_promep }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento PROESDE :<br> {{ $user->datos->reconocimiento_proesde }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        División :<br> {{ $user->datos->division }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Departamento :<br> {{ $user->datos->departamento }}
-                    </div>
-
-
-                </div>
-
-                <hr>
                 @include('proyectos.resumen')
 
                 @include('proyectos.metodologia')

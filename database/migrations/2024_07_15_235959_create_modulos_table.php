@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('permiso',100);
             $table->string('color')->default('#e2e2e2');
             $table->string('icono')->default('info');
+            $table->tinyInteger('orden')->default(1);
             $table->timestamps();
         });
     }

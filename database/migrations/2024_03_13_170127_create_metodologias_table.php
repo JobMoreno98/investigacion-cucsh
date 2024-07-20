@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('objetivos');
             $table->text('hipotesis');
             $table->text('criterios_eticos');
-            $table->text('referecnias');
+            $table->text('referencias');
             $table->string('anexos',200);
             $table->unsignedBigInteger('proyecto_id')->nullable();
             $table->foreign('proyecto_id')->references('id')->on('proyectos');

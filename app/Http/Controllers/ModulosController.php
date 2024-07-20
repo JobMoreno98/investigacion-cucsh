@@ -24,6 +24,7 @@ class ModulosController extends Controller
             'icono' => isset($request->icono) ? $request->icono : 'info',
             'color' => isset($request->color) ? $request->color : '#e2e2e2',
             'permiso' => $request->permiso,
+            'orden' => $request->orden
         ]);
         alert()->success('Exito', 'Se ha registrado el modulo de manera exitosa')->persistent(true, false);
         return redirect()->route('modulos.index');
@@ -40,13 +41,13 @@ class ModulosController extends Controller
             'nombre' => $request->nombre,
             'icono' => $request->icono,
             'color' => $request->color,
-            'nombre_permiso' => $request->nombre_permiso,
+            'permiso' => $request->permiso,
             'orden' => $request->orden,
         ]);
-
         if (isset($request->enlaces) && isset($request->titulo)) {
             $enlaces = array_combine($request->enlaces, $request->titulo);
             $parametros = $request->parametros;
+            $permisos = $request->permisos;
             $cont = 0;
             foreach ($enlaces as $key => $value) {
                 EnlaceModulo::updateOrCreate(
@@ -54,6 +55,7 @@ class ModulosController extends Controller
                     [
                         'modulo_id' => $modulo->id,
                         'enlace' => $key,
+                        'permiso' => $permisos[$cont],
                         'titulo' => $value,
                         'parametro' => $parametros[$cont],
                         'estilo' => isset($request->estilos[$cont]) ? $request->estilos[$cont] : 'btn btn-outline-success  btn-sm m-1',

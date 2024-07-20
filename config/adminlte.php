@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Title
@@ -136,7 +135,7 @@ return [
     'usermenu_enabled' => true,
     'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => true,
 
@@ -295,7 +294,7 @@ return [
 
     'menu' => [
         // Navbar items:
-        
+        /*
         [
             'type' => 'navbar-search',
             'text' => 'search',
@@ -305,7 +304,7 @@ return [
             'type' => 'darkmode-widget',
             'topnav_right' => true,
         ],
-
+*/
         // Sidebar items:
         /*
         [
@@ -342,9 +341,7 @@ return [
             'icon_color' => 'cyan',
             'url' => '#',
         ],*/
-
     ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -358,15 +355,7 @@ return [
     |
     */
 
-    'filters' => [
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
-    ],
+    'filters' => [JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class, JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class, JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class, JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class, JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class, JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class, JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class],
 
     /*,
     |--------------------------------------------------------------------------

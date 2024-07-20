@@ -11,6 +11,7 @@ use App\Models\EnlaceModulo;
 use App\Models\Modulos;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -37,33 +38,29 @@ class EventServiceProvider extends ServiceProvider
             $user = Auth::user();
             $permissionNames = $user->getPermissionsViaRoles();
 
-            $mapped = Arr::map($permissionNames->pluck('name')->toArray(), function (string $value, string $key) {
-                return explode('#', $value)[0];
-            });
-            $nombres = array_values(array_unique($mapped));
+            $modulos = DB::table('modulos_enlace')->whereIn('enlace_permiso', $permissionNames->pluck('name')->toArray())->get()->groupBy('modulo_nombre');
 
-            $enlaces = Modulos::with('enlaces')->select('id', 'nombre', 'permiso', 'icono', 'color')->whereIn('permiso', $nombres)->orderBy('nombre')->get();
-            $items = $enlaces->map(function (Modulos $page, $user_id) {
-                $submenu = $page->enlaces->map(function (EnlaceModulo $elemento, $user_id) {
-                    $parametros = str_replace('user_id', strval($this->user_id), $elemento['parametro']);
+            $items = $modulos->map(function ($page, $user_id) {
+                $submenu = $page->map(function ($page, $user_id) {
+                    $parametros = str_replace('user_id', strval($this->user_id), $page->enlace_parametro);
                     return [
-                        'text' => $elemento['titulo'],
-                        'route' => [$elemento['enlace'], ['evalaudor', $parametros ]],
+                        'text' => $page->enlace_titulo,
+                        'route' => [$page->enlace_enlace, ['evalaudor', $parametros]],
                         'classes' => 'text-yellow',
                     ];
                 });
                 //dd($submenu->toArray());
+
                 $menu = [
-                    'icon' => $page['icono'],
-                    'text' => $page['nombre'],
+                    'text' => $page[0]->modulo_nombre,
+                    'icon' => $page[0]->modulo_icono,
                     'submenu' => $submenu->toArray(),
                     'classes' => 'd-flex text-end',
                 ];
-                //dd($menu);
                 return $menu;
             });
-            //dd($items);
-            $event->menu->add(...$items);
+            //dd(array_values($items->toArray()));
+            $event->menu->add(...array_values($items->toArray()));
         });
     }
 }
