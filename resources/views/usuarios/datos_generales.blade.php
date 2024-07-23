@@ -9,6 +9,11 @@
     @include('layouts.head')
 @endsection
 
+@section('content_header')
+    <h3>Datos Generales</h3>
+    <hr>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="row ">
@@ -21,8 +26,6 @@
                     </ul>
                 </div>
             @endif
-            <h3>Datos Generales</h3>
-            <hr>
             <form action="{{ route('usuarios.update', Auth::user()->id) }}" method="post" class="row justify-content-center">
                 @csrf
                 @method('PUT')
@@ -101,7 +104,6 @@
                         <option value="{{ $user->datos != null ? $user->datos->departamento : '' }}">
                             {{ $user->datos != null ? $user->datos->departamento : '' }}
                         </option>
-                        <option disabled>Elegir</option>
                         <option value="Departamento de Lenguas Modernas">Departamento de Lenguas Modernas</option>
                         <option value="Departamento de Filosofía">Departamento de Filosofía</option>
                         <option value="Departamento de Geografía y Ordenación Territorial">Departamento de Geografía y
@@ -160,7 +162,15 @@
             </form>
         </div>
     </div>
+
 @endsection
 @section('js')
     @include('layouts.scripts')
+    <script>
+        $(document).ready(function() {
+            $('#departamento').select2({
+                placeholder: 'Elegir'
+            });
+        });
+    </script>
 @endsection

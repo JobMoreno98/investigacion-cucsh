@@ -1,8 +1,16 @@
 @extends('adminlte::page')
 @section('title', 'Editar Rol')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">Loading</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+@endsection
 @section('content')
     <div class="container">
-        @if (Auth::check() )
+        @if (Auth::check())
             @if (session('message'))
                 <div class="alert alert-success">
                     <h2>{{ session('message') }}</h2>
@@ -40,9 +48,9 @@
                             value="{{ $rol->name }}">
                     </div>
                     <div class="col-md-7">
-                        <label class="font-weight-bold" for="description">Descripción</label>
-                        <input type="text" class="form-control" id="description" name="description"
-                            value="{{ $rol->description }}">
+                        <label class="font-weight-bold" for="descripcion">Descripción</label>
+                        <input type="text" class="form-control" id="descripcion" name="descripcion"
+                            value="{{ $rol->descripcion }}">
                     </div>
                 </div>
                 <br>

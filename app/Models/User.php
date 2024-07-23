@@ -53,7 +53,15 @@ class User extends Authenticatable
     {
         return route('usuario.edit', $this->id);
     }
-    public function adminlte_image(){
-        return asset('storage/fotos_perfil/' . $this->foto);
+    public function adminlte_image()
+    {
+        if (isset($this->foto) && strcmp('', $this->foto) != 0) {
+            return asset('storage/fotos_perfil/' . $this->foto);
+        }
+        return asset('images/user-logo.png');
+    }
+    public function adminlte_desc()
+    {
+        return strtoupper($this->getRoleNames()[    0]);
     }
 }

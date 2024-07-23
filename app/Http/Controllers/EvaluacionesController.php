@@ -188,13 +188,19 @@ class EvaluacionesController extends Controller
         } else {
             $ciclo = ciclos::find($id_ciclo);
         }
+        if (isset($ciclo)) {
+            $proyectos = evaluaciones::with('proyecto', 'user')
+                ->where('evaluador_id', $id)
+                ->where('ciclo_id', $ciclo->id)
+                ->get();
 
-        $proyectos = evaluaciones::with('proyecto', 'user')
-            ->where('evaluador_id', $id)
-            ->where('ciclo_id', $ciclo->id)
-            ->get();
-
-        return view('evaluador.proyectos', compact('proyectos'));
+            return view('evaluador.proyectos', compact('proyectos'));
+        }
+        //Alert::info('Alerta','Aun no se han abierto periodos de registro de proyectos');
+        //toast('Your Post as been submited!','info')->hideCloseButton();
+        // example:
+        toast('Aun no se han abierto periodos de registro de evaluaciones', 'info')->hideCloseButton()->timerProgressBar();
+        return redirect()->route('home');
     }
 
     public function evaluar_proyecto(proyectos $proyecto)

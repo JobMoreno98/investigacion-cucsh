@@ -192,7 +192,36 @@ class User extends Controller
     }
     public function create()
     {
-        return view('admin.usuarios.create');
+        if (Auth::user()->hasRole('admin')) {
+            $roles = [];
+            $roles[] = ['id' => 0, 'name' => 'Seleccione un Rol', 'selected' => ''];
+            foreach (Role::orderBy('name')->get() as $rol) {
+                $elemento = [
+                    'id' => $rol->id,
+                    'name' => $rol->name,
+                    'selected' => '',
+                ];
+                $roles[] = $elemento;
+            }
+            return view('admin.usuarios.create')->with('roles', $roles);
+        }
+    }
+
+    public function store(Request $request)
+    {
+        if (Auth::user()->hasRole('admin')) {
+            $usuario = ModelsUser::create([
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+                'rol' => $request->rol,
+            ]);
+            //dd($usuario);
+            $usuario->syncRoles(); # Se borran todos los anteriores
+            $usuario->syncRoles([$request['rol']]); # se asignan todos lo que esten en el array+
+            Alert::success('EXITO','Se registro el usuario de forma exitosa');
+            return redirect()->route('usuarios.index');
+        }
     }
 
     public function update_user(Request $request, $id)
@@ -237,6 +266,7 @@ class User extends Controller
         }
 
         if (Auth::user()->hasRole('admin')) {
+           
             $user->role = $request['rol'];
             $user->update();
             $user->syncRoles(); # Se borran todos los anteriores

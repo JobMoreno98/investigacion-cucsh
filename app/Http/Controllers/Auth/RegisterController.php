@@ -41,6 +41,7 @@ class RegisterController extends Controller
     }
 
     /**
+     *
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
@@ -63,15 +64,16 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-
         $usuario = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'rol' => 'investigador'
+            'rol' => 'investigador',
         ]);
-        $usuario->syncRoles(['investigador']);
+        if (str_contains('@academicos.udg.mx', $data['email'])) {
+            $usuario->syncRoles(['investigador']);
+        }
 
-        return $usuario ;
+        return $usuario;
     }
 }

@@ -31,7 +31,7 @@
                             class="form-control">
                     </div>
                     <div class="mx-1">
-                        <input type="text" placeholder="Nombre permiso" name="nombre_permiso"
+                        <input type="text" placeholder="Nombre permiso" name="permiso"
                             value="{{ $modulo->permiso }}" class="form-control">
                     </div>
                     <div class="mx-1">
@@ -96,7 +96,7 @@
 @endsection
 
 @section('js')
-    @include('sweetalert::alert')
+    @include('layouts.scripts')
     <script>
         var cont = 0;
         $('.clonar').click(function() {

@@ -45,8 +45,8 @@ class EventServiceProvider extends ServiceProvider
                     $parametros = str_replace('user_id', strval($this->user_id), $page->enlace_parametro);
                     return [
                         'text' => $page->enlace_titulo,
-                        'route' => [$page->enlace_enlace, ['evalaudor', $parametros]],
-                        'classes' => 'text-yellow',
+                        'route' => [$page->enlace_enlace, [$parametros]],
+                        'classes' => 'text-white',
                     ];
                 });
                 //dd($submenu->toArray());

@@ -1,6 +1,13 @@
 @extends('adminlte::page')
-@section('title', 'Préstamos edit')
+@section('title', 'Roles')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">Loading</h4>
+@stop
 
+@section('css')
+    @include('layouts.head')
+@endsection
 @section('content')
     <div class="container">
         @if (Auth::check())
@@ -26,7 +33,7 @@
             </div>
             <div class="row align-items-center justify-content-center">
                 <div class="col-sm-12">
-                    <table id="usersTable" class=" display table table-striped table-bordered">
+                    <table id="myTable" class=" display table table-striped table-bordered">
                         <thead>
                             <tr>
                                 <th>Rol</th>
@@ -38,7 +45,7 @@
                             @foreach ($roles as $role)
                                 <tr>
                                     <td>{{ $role->name }}</td>
-                                    <td>{{ $role->description }}</td>
+                                    <td>{{ $role->descripcion }}</td>
                                     <td>
                                         <form method="GET" action="{{ route('roles.edit', $role->id) }}">
                                             <button type="submit" class="btn btn-info">
@@ -59,5 +66,8 @@
             El periodo de Registro de Proyectos a terminado
         @endif
     </div>
-    <script type="text/javascript" src="{{ asset('js/usuarios/main.js') }}"></script>
+@endsection
+@section('js')
+    @include('layouts.scripts')
+    @include('sweetalert::alert')
 @endsection

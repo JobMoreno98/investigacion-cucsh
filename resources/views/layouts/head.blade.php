@@ -15,3 +15,16 @@
         license_key: 'gpl'
     });
 </script>
+<style>
+    [class*="sidebar-dark-"] .nav-treeview>.nav-item>.nav-link.active,
+    [class*="sidebar-dark-"] .nav-treeview>.nav-item>.nav-link.active:hover,
+    [class*="sidebar-dark-"] .nav-treeview>.nav-item>.nav-link.active:focus {
+        background-color: #340185;
+        color: #fff !important;
+    }
+
+    .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
+        background-color: #1d0249;
+        color: #fff;
+    }
+</style>

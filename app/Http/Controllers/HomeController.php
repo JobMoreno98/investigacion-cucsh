@@ -26,16 +26,12 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $permissionNames = $user->getPermissionsViaRoles();
-        $modulos = DB::table('modulos_enlace')
-        ->whereIn('enlace_permiso',$permissionNames->pluck('name')->toArray())
-        ->get()
-        ->groupBy('modulo_nombre');
+        $modulos = DB::table('modulos_enlace')->whereIn('enlace_permiso', $permissionNames->pluck('name')->toArray())->get()->groupBy('modulo_nombre');
         //return ($modulos);
         return view('home', compact('modulos'));
     }
-    
 }

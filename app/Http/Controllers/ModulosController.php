@@ -37,6 +37,7 @@ class ModulosController extends Controller
     }
     public function update(Request $request, Modulos $modulo)
     {
+        
         $modulo->update([
             'nombre' => $request->nombre,
             'icono' => $request->icono,

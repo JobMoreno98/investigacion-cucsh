@@ -8,6 +8,10 @@
 @section('css')
     @include('layouts.head')
 @endsection
+
+@section('content_header')
+    <h2>Usuarios</h2>
+@endsection
 @section('content')
     <div class="container">
         @if (Auth::check())

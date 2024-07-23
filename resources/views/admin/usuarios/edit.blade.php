@@ -8,7 +8,7 @@
 @section('css')
     @include('layouts.head')
     <style>
-        #foto-perfil{
+        #foto-perfil {
             width: 100px;
             height: 100px;
             border-radius: 50%;
@@ -26,7 +26,14 @@
                             @method('PUT')
                             @csrf
                             <div class="d-flex justify-content-center my-2">
-                                <img id="foto-perfil" src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}" alt="">
+                                @php
+                                    if (isset($usuario->foto) && strcmp('', $usuario->foto) != 0) {
+                                        $url = asset('storage/fotos_perfil/' . $usuario->foto);
+                                    } else {
+                                        $url = asset('images/user-logo.png');
+                                    }
+                                @endphp
+                                <img id="foto-perfil" src="{{ $url }}" alt="">
                             </div>
                             <div class="form-group row">
                                 <label for="name"
