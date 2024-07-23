@@ -1,5 +1,12 @@
 @extends('adminlte::page')
 @section('title', 'Relacionar rol')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">__("Loading")</h4>
+@stop
+@section('css')
+    @include('layouts.head')
+@endsection
 @section('content')
     <div class="container">
         @if (Auth::check())
@@ -11,39 +18,37 @@
             <div class="row">
                 <h2 class="text-center mt-2 w-100">Asignar permisos a rol - {{ $rol->name }} </h2>
             </div>
-            <div class="row align-items-center">
-                <div class="col-sm-12">
-                    <form method="POST" id="formPermisos" action="{{ route('guardar_relacion_permisos') }}">
-                        @method('POST')
-                        @csrf
-                        <input type="hidden" id="role_id" name="role_id" value="{{ $rol->id }}" />
-                        <input type="hidden" id="permisos_seleccionados" name="permisos_seleccionados" value="" />
-                        <table id="relatedTable" class="display table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Modulo</th>
-                                    <th>Permiso</th>
-                                    <th>Asignado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                        <button class="btn btn-success" type="button" onclick="sendData()">Guardar</button>
-                    </form>
+            <form action="{{ route('guardar_relacion_permisos', $rol->id) }}" method="post">
+                @csrf
+                <div class="d-flex flex-wrap justify-content-around">
+                    @foreach ($permisos as $key => $value)
+                        <div class="card m-1 col-sm-12 col-md-3 h-100">
+                            <div class="card-body">
+                                <h5 class=" w-100 border-bottom mb-1 pb-1">{{ $key }}</h5>
+                                <div>
+                                    @foreach ($value as $item)
+                                        <div class="form-check">
+                                            <input name="permisos_seleccionados[]" class="form-check-input" type="checkbox"
+                                                value="{{ $item->permiso_id }}" id="flexCheckChecked"
+                                                {{ isset($item->input) ? $item->input : '' }}>
+                                            <label class="form-check-label" for="flexCheckChecked">
+                                                {{ $item->nombre_permiso }}
+
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                    <div class="col-sm-12 text-center my-2">
+                        <button type="submit" class="btn- btn-sm btn-success">Enviar</button>
+                    </div>
                 </div>
 
-            </div>
+            </form>
         @else
             El periodo de Registro de Proyectos a terminado
         @endif
     </div>
-@section('js')
-    <script type="text/javascript">
-        var data = @json($permisos);
-    </script>
-    <script type="text/javascript" src="{{ asset('js/usuarios/relatedPermission.js') }}"></script>
-
-@stop
-
 @endsection

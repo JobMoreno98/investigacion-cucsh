@@ -11,7 +11,6 @@
 @section('content')
     <div class="container">
         @if (Auth::check())
-
             <div class="row">
                 <div class="col-sm-12">
                     <h2 class="text-center">Administración de Roles</h2>

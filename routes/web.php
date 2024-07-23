@@ -37,7 +37,7 @@ Route::get('asignar-permisos/{id}', [
     'uses' => 'App\Http\Controllers\RolesController@relacionar',
 ]);
 
-Route::post('guardar-relacion-permisos', [
+Route::post('guardar-relacion-permisos/{id}', [
     'as' => 'guardar_relacion_permisos',
     'middleware' => 'auth',
     'uses' => 'App\Http\Controllers\RolesController@guardarRelacion',

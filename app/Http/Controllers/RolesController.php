@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Arr;
 
 class RolesController extends Controller
 {
@@ -160,6 +161,32 @@ class RolesController extends Controller
 
     public function relacionar($id)
     {
+        $permisosID = DB::table('roles_permisos')->select('permiso_id', 'nombre_permiso', 'modulo')->where('role_id', $id);
+        $permisosSi = with($permisosID)->get()->groupBy('modulo');
+        $permisos_id = with($permisosID)->get()->toArray();
+        $permisos_id = Arr::pluck($permisos_id, 'permiso_id');
+        $permidosNot = DB::table('roles_permisos')->select('permiso_id', 'nombre_permiso', 'modulo')->whereNotIn('permiso_id', $permisos_id)->orderBy('role_id')->get()->groupBy('modulo');
+
+        $permisos = $permidosNot->map(function ($item, $key) {
+            $item->input = '';
+            return $item->unique('nombre_permiso')->all();
+        });
+
+        $arreglo_permisos = collect(Arr::collapse($permisos));
+        $permisosID = collect(Arr::collapse($permisosSi));
+
+        $arr = $permisosID->map(function ($arreglo) {
+            $arreglo->input = 'checked';
+            return $arreglo;
+        });
+
+        //$array = array_merge(Arr::collapse($permisos), Arr::collapse($permisosID));
+        $permisos = array_merge_recursive($arr->groupBy('modulo')->toArray(), $arreglo_permisos->groupBy('modulo')->toArray());
+        $rol = Role::findOrFail($id);
+        return view('roles.relacionar', compact('permisos', 'rol'));
+
+        //->unique('modulo')->groupBy('modulo')->toArray();
+        //dd($permidosNot);
         #Obteniendo permisos asignados al rol
         $soloIdAsignados = [];
         $asignados = DB::table('role_has_permissions')->where('role_id', $id)->get();
@@ -189,15 +216,14 @@ class RolesController extends Controller
         return view('roles.relacionar')->with('permisos', $dataReturn)->with('rol', $rol);
     }
 
-    public function guardarRelacion(Request $request)
+    public function guardarRelacion(Request $request, $id)
     {
-        $permisos = base64_decode($request->get('permisos_seleccionados'));
-        $array_permisos = explode(',', $permisos);
-        $role = Role::findOrFail($request->get('role_id'));
+        //$permisos = base64_decode($request->get('permisos_seleccionados'));
+        $role = Role::findOrFail($id);
         //$role->givePermissionTo($permisos);
-        $role->syncPermissions(collect($array_permisos)->map(fn($val) => (int) $val));
-
-        $roles = Role::all();
-        return view('roles.index')->with('roles', $roles)->with('success', 'Permisos asignados correctamente.');
+        //dd($request->permisos_seleccionados);
+        $role->syncPermissions(collect($request->permisos_seleccionados)->map(fn($val)=>(int)$val));
+        Alert::success('exito', 'exito');
+        return redirect()->route('roles.index');
     }
 }
