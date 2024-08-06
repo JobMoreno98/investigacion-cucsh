@@ -2,10 +2,14 @@
 @section('title', 'Relacionar rol')
 @section('preloader')
     <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
-    <h4 class="mt-4 text-dark">__("Loading")</h4>
+    <h4 class="mt-4 text-dark">{{ __('Loading') }}</h4>
 @stop
 @section('css')
     @include('layouts.head')
+@endsection
+
+@section('content_header')
+    <h2 class="text-center mt-2 w-100"><span class=" border-bottom">Asignar permisos a rol - {{ $rol->name }} </span> </h2>
 @endsection
 @section('content')
     <div class="container">
@@ -15,9 +19,6 @@
                     <h2>{{ session('message') }}</h2>
                 </div>
             @endif
-            <div class="row">
-                <h2 class="text-center mt-2 w-100">Asignar permisos a rol - {{ $rol->name }} </h2>
-            </div>
             <form action="{{ route('guardar_relacion_permisos', $rol->id) }}" method="post">
                 @csrf
                 <div class="d-flex flex-wrap justify-content-around">
