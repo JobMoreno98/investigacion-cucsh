@@ -37,7 +37,9 @@
             var columnas = @json($columnas);
             var data = @json($proyectosFin);
             //console.log(data);
-	    $('#myTable').append('<caption style="caption-side: bottom">Rubro: 2111 Papeleria <br> Rubro 2141: Toner y memoria usb  </caption>');
+            /*$('#myTable').append(
+                '<caption style="caption-side: bottom">Rubro: 2111 Papeleria <br> Rubro 2141: Toner y memoria usb  </caption>'
+                );*/
             var table = $('#myTable').DataTable({
                 data: data,
                 columnDefs: columnas,
@@ -70,9 +72,10 @@
                 // dom: 'Bfrtip',
                 dom: '<"col-xs-3"l><"col-xs-5"B><"col-xs-4"f>rtip',
                 buttons: [{
-                    extend: 'excelHtml5', footer: true,
+                    extend: 'excelHtml5',
+                    footer: true,
                     title: nombre,
-		    messageBottom: 'The information in this table is copyright to Sirius Cybernetics Corp. prueba'
+
                 }, ]
             })
         });
@@ -125,6 +128,6 @@
                 return ((a < b) ? 1 : ((a > b) ? -1 : 0));
             }
         });
-        //"columnDefs": [{ type: 'portugues', targets: "_all" }],            
+        //"columnDefs": [{ type: 'portugues', targets: "_all" }],
     </script>
 @endsection

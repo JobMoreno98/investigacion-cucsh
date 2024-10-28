@@ -1,22 +1,3 @@
-/*-----------------------------------------------------------------------------------
-
-    Template Name: ClassiList
-    Author: GrayGrids
-
------------------------------------------------------------------------------------
-
-    CSS INDEX
-    ===================
-
-    01. Theme default CSS
-	02. Header
-    03. Hero
-	04. Footer
-
------------------------------------------------------------------------------------*/
-/*===========================
-    01.COMMON css 
-===========================*/
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800;900&display=swap");
 
 /*===== All Preloader Style =====*/
@@ -124,24 +105,31 @@
   12.5% {
     transform: rotate(135deg);
   }
+
   25% {
     transform: rotate(270deg);
   }
+
   37.5% {
     transform: rotate(405deg);
   }
+
   50% {
     transform: rotate(540deg);
   }
+
   62.5% {
     transform: rotate(675deg);
   }
+
   75% {
     transform: rotate(810deg);
   }
+
   87.5% {
     transform: rotate(945deg);
   }
+
   to {
     transform: rotate(1080deg);
   }
@@ -151,9 +139,11 @@
   0% {
     transform: rotate(130deg);
   }
+
   50% {
     transform: rotate(-5deg);
   }
+
   to {
     transform: rotate(130deg);
   }
@@ -163,9 +153,11 @@
   0% {
     transform: rotate(-130deg);
   }
+
   50% {
     transform: rotate(5deg);
   }
+
   to {
     transform: rotate(-130deg);
   }
