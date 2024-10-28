@@ -14,6 +14,7 @@ class Metodologias extends Model
         'hipotesis',
         'criterios_eticos',
         'referencias',
-        'proyecto_id'
+        'proyecto_id',
+        'anexos'
     ];
 }

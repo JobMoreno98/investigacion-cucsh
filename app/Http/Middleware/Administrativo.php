@@ -17,10 +17,9 @@ class Administrativo
     public function handle(Request $request, Closure $next)
     {
 
-        if(!auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->s_role == 'admin')){
+        if(!$request->user()->hasRole('admin')){
             abort(403);
         }
-
         return $next($request);
     }
 }

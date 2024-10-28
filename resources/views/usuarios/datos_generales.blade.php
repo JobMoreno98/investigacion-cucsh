@@ -1,29 +1,34 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+@section('title', 'Datos Generales')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">{{ __('Loading') }}</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+@endsection
+
+@section('content_header')
+    <h3>Datos Generales</h3>
+    <hr>
+@endsection
+
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="row ">
-@if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-            <h3>Datos Generales</h3>
-            <hr>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form action="{{ route('usuarios.update', Auth::user()->id) }}" method="post" class="row justify-content-center">
                 @csrf
                 @method('PUT')
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label" for="">Nombre</label>
-                    <input class="form-control" type="text" name="name" id="" value="{{ $user->name }}">
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label" for="">Correo</label>
-                    <input class="form-control" type="text" name="email" id="" value="{{ $user->email }}">
-                </div>
                 <div class="col-sm-12 col-md-6">
                     <label class="form-label" for="">Nombramiento</label>
                     <input class="form-control" type="text" name="nombramiento" id=""
@@ -44,19 +49,24 @@
                             No
                         </option>
                         <option value="Nivel 1"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Nivel 1') == 0 ? 'selected' : '') : '' }}>Nivel 1
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Nivel 1') == 0 ? 'selected' : '') : '' }}>
+                            Nivel 1
                         </option>
                         <option value="Nivel 2"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Nivel 2') == 0 ? 'selected' : '') : '' }}>Nivel 2
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Nivel 2') == 0 ? 'selected' : '') : '' }}>
+                            Nivel 2
                         </option>
                         <option value="Nivel 3"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Nivel 3') == 0 ? 'selected' : '') : '' }}>Nivel 3
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Nivel 3') == 0 ? 'selected' : '') : '' }}>
+                            Nivel 3
                         </option>
                         <option value="Candidato"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Candidato') == 0 ? 'selected' : '') : '' }}>Candidato
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Candidato') == 0 ? 'selected' : '') : '' }}>
+                            Candidato
                         </option>
                         <option value="Emérito"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Emérito') == 0 ? 'selected' : '') : '' }}>Emérito
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_sni, 'Emérito') == 0 ? 'selected' : '') : '' }}>
+                            Emérito
                         </option>
                     </select>
                 </div>
@@ -66,9 +76,11 @@
                     <select name="reconocimiento_promep" id="" class="form-control">
                         <option disabled selected>Elegir</option>
                         <option value="Si"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_promep, 'Si') == 0 ? 'selected' : '') : '' }}>Si</option>
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_promep, 'Si') == 0 ? 'selected' : '') : '' }}>
+                            Si</option>
                         <option value="No"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_promep, 'No') == 0 ? 'selected' : '') : '' }}>No</option>
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_promep, 'No') == 0 ? 'selected' : '') : '' }}>
+                            No</option>
                     </select>
                 </div>
 
@@ -77,9 +89,11 @@
                     <select name="reconocimiento_proesde" id="" class="form-control">
                         <option disabled selected>Elegir</option>
                         <option value="Si"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_proesde, 'Si') == 0 ? 'selected' : '') : '' }}>Si</option>
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_proesde, 'Si') == 0 ? 'selected' : '') : '' }}>
+                            Si</option>
                         <option value="No"
-                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_proesde, 'No') == 0 ? 'selected' : '') : '' }}>No</option>
+                            {{ $user->datos != null ? (strcmp($user->datos->reconocimiento_proesde, 'No') == 0 ? 'selected' : '') : '' }}>
+                            No</option>
                     </select>
                 </div>
 
@@ -87,9 +101,9 @@
                 <div class="col-md-6">
                     <label for="departamento">Departamento</label>
                     <select class="form-control" id="departamento" name="departamento">
-                        <option value="{{ $user->datos != null ? $user->datos->departamento: ''}}" >{{ $user->datos != null ? $user->datos->departamento: ''}}
+                        <option value="{{ $user->datos != null ? $user->datos->departamento : '' }}">
+                            {{ $user->datos != null ? $user->datos->departamento : '' }}
                         </option>
-                        <option disabled >Elegir</option>
                         <option value="Departamento de Lenguas Modernas">Departamento de Lenguas Modernas</option>
                         <option value="Departamento de Filosofía">Departamento de Filosofía</option>
                         <option value="Departamento de Geografía y Ordenación Territorial">Departamento de Geografía y
@@ -111,7 +125,7 @@
                         <option value="Departamento de Sociología">Departamento de Sociología</option>
                         <option value="Departamento de Estudios Políticos">Departamento de Estudios Políticos</option>
                         <option value="Departamento de Trabajo Social">Departamento de Trabajo Social</option>
-                        <option value="Departamento de Estudios  Internacionales">Departamento de Estudios 
+                        <option value="Departamento de Estudios  Internacionales">Departamento de Estudios
                             Internacionales</option>
                         <option value="Departamento de Desarrollo Social">Departamento de Desarrollo Social</option>
                         <option value="Departamento de Estudios en Educación">Departamento de Estudios en Educación</option>
@@ -121,14 +135,16 @@
                             Movimientos Sociales</option>
                         <option value="Departamento de Estudios Socio Urbanos">Departamento de Estudios Socio Urbanos
                         </option>
-                        <option value="Departamento de Estudios del Pacífico">Departamento de Estudios del Pacífico</option>
+                        <option value="Departamento de Estudios del Pacífico">Departamento de Estudios del Pacífico
+                        </option>
                     </select>
                 </div>
                 <div class="col-md-6">
                     <label for="division">División</label>
                     <select class="form-control" id="division" name="division">
-                        <option selected value="{{ $user->datos != null ? $user->datos->division: '' }}">{{ $user->datos != null ? $user->datos->division: '' }}</option>
-                        <option disabled >Elegir</option>
+                        <option selected value="{{ $user->datos != null ? $user->datos->division : '' }}">
+                            {{ $user->datos != null ? $user->datos->division : '' }}</option>
+                        <option disabled>Elegir</option>
                         <option value="División de Estudios Históricos y Humanos">División de Estudios Históricos y Humanos
                         </option>
                         <option value="División de Estudios Jurídicos">División de Estudios Jurídicos</option>
@@ -139,35 +155,22 @@
                         </option>
                     </select>
                 </div>
-
-
-                <div class="col-sm-12 mt-3">
-                    <h4>Cambio de contraseña</h4>
-                    <hr class="mt-3 border border-dark border-1 opacity-50">
-                    <a href=""></a>
-                </div>
-
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label" for="">Contraseña nueva</label>
-                    <input class="form-control" type="password" name="password" id="" >
-                    @error('password')
-                        <small>{{ $message }}</small>
-                    @enderror
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <label class="form-label" for="">Confirmar contraseña</label>
-                    <input class="form-control" type="password" name="password_confirmation" id="">
-                    @error('password_confirmation')
-                        <small>{{ $message }}</small>
-                    @enderror
-                </div>
-
-
-                
                 <div class=" col-sm-12 col-md-2 mt-2">
                     <button type="submit" class="btn btn-success w-100">Guardar</button>
                 </div>
 
             </form>
         </div>
-    @endsection
+    </div>
+
+@endsection
+@section('js')
+    @include('layouts.scripts')
+    <script>
+        $(document).ready(function() {
+            $('#departamento').select2({
+                placeholder: 'Elegir'
+            });
+        });
+    </script>
+@endsection

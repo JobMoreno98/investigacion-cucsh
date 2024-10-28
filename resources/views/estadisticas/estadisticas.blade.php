@@ -1,4 +1,14 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+
+@section('title', 'Estadisticas')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">{{ __('Loading') }}</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+@endsection
 
 @section('content')
     <div class="container">
@@ -18,7 +28,12 @@
                                             /
                                             {{ $total }}</a>
                                         @php
-                                            $progreso = ((int) $value * 100) / $total;
+                                            if ($total > 0) {
+                                                $progreso = ((int) $value * 100) / $total;
+                                            } else {
+                                                $progreso = 0;
+                                            }
+
                                         @endphp
                                         <div class="progress " role="progressbar" aria-label="{{ $key }}"
                                             aria-valuenow="{{ $progreso }}" aria-valuemin="0"
@@ -57,7 +72,6 @@
                                 @foreach ($evaluados as $key => $value)
                                     <div class="col-sm-12 col-md-3 my-3">
                                         <div class="card h-100 w-100 mx-1">
-
                                             <div class="card-body row d-flex align-items-center">
                                                 <div class="col-sm-12 col-md-9">
                                                     <p class="border-end my-auto">{{ $key }}</p>
@@ -65,7 +79,6 @@
                                                 <div class="col-sm-12 col-md-2 ">
                                                     <a class="btn border-bottom"
                                                         href="{{ route('resultadosEvaluaciones', $key) }}">{{ $value }}</a>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -108,4 +121,7 @@
             @endif
         </div>
     </div>
+@endsection
+@section('js')
+    <script src="{{ asset('js/app.js') }}"></script>
 @endsection

@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CartaConfidencialidad;
 use App\Models\ciclos;
 use App\Models\evaluaciones;
 use App\Models\proyectos;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\File;
 
 class EvaluacionesController extends Controller
 {
@@ -20,7 +25,9 @@ class EvaluacionesController extends Controller
                 ->where('activo', 1)
                 ->where('ciclo_id', $ciclo->id)
                 ->where('definitivo', 1)
+                ->where('tipo_registro', 'Proyecto nuevo')
                 ->get();
+
             return view('evaluaciones.index', compact('proyectos'));
         } else {
             Alert::danger('Error', 'No hay ciclos registrados');
@@ -47,9 +54,10 @@ class EvaluacionesController extends Controller
         }
         $proyecto->monto_total = $total;
 
-        $evalaudores = User::where('role', '=', 'evaluador')
+        $evalaudores = User::permission('EVALUADOR#ver')->get();
+        /* $evalaudores = User::where('role', '=', 'evaluador')
             ->orWhere('s_role', '=', 'evaluador')
-            ->get();
+            ->get();*/
         return view('evaluaciones.show', compact('evalaudores', 'proyecto'));
     }
 
@@ -121,8 +129,7 @@ class EvaluacionesController extends Controller
             $evaluacion = $this->continuacion($request, $ciclo);
         }
         Alert::success('Exito', 'Se guardo correctamente');
-        return redirect()
-            ->route('home');
+        return redirect()->route('home');
 
         $evaluacion = evaluaciones::find($id);
 
@@ -145,17 +152,22 @@ class EvaluacionesController extends Controller
         $ciclo = ciclos::latest()->first();
         $evaluacion = evaluaciones::updateOrCreate(
             [
-                'proyectos_id' => $proyecto->id,
+                'proyecto_id' => $proyecto->id,
             ],
-            ['evaluador_id' => $user->id, 'ciclo_id' => $ciclo->id],
+            [
+                'users_id ' => 1,
+                'proyecto_id' => $proyecto->id,
+                'evaluador_id' => $user->id,
+                'ciclo_id' => $ciclo->id,
+            ],
         );
         $proyecto->evaluador_id = $user->id;
 
         $proyecto->evaluacion_id = $evaluacion->id;
         $proyecto->update();
+
         Alert::success('Exito', 'Se asigno correctamente el evalaudor');
-        return redirect()
-            ->route('home');
+        return redirect()->route('home');
     }
 
     public function proyectos_asigandos()
@@ -165,6 +177,7 @@ class EvaluacionesController extends Controller
             ->where('ciclo_id', $ciclo->id)
             ->where('dictamen', '!=', '-')
             ->get();
+
         return view('evaluaciones.asigandos', compact('asigandos'));
     }
 
@@ -175,13 +188,19 @@ class EvaluacionesController extends Controller
         } else {
             $ciclo = ciclos::find($id_ciclo);
         }
+        if (isset($ciclo)) {
+            $proyectos = evaluaciones::with('proyecto', 'user')
+                ->where('evaluador_id', $id)
+                ->where('ciclo_id', $ciclo->id)
+                ->get();
 
-        $proyectos = evaluaciones::with('proyecto', 'user')
-            ->where('evaluador_id', $id)
-            ->where('ciclo_id', $ciclo->id)
-            ->get();
-
-        return view('evaluador.proyectos', compact('proyectos'));
+            return view('evaluador.proyectos', compact('proyectos'));
+        }
+        //Alert::info('Alerta','Aun no se han abierto periodos de registro de proyectos');
+        //toast('Your Post as been submited!','info')->hideCloseButton();
+        // example:
+        toast('Aun no se han abierto periodos de registro de evaluaciones', 'info')->hideCloseButton()->timerProgressBar();
+        return redirect()->route('home');
     }
 
     public function evaluar_proyecto(proyectos $proyecto)
@@ -276,15 +295,12 @@ class EvaluacionesController extends Controller
         $evaluacion->definitivo = 1;
         $evaluacion->update();
         Alert::success('Exito', 'Se guardo correctamente');
-        return redirect()
-            ->route('home');
+        return redirect()->route('home');
     }
 
     public function imprimirEvaluacion($id)
     {
-        $evaluacion = evaluaciones::with('proyecto', 'evaluador')
-            ->where('proyectos_id', $id)
-            ->first();
+        $evaluacion = evaluaciones::with('proyecto', 'evaluador')->where('proyectos_id', $id)->first();
 
         $proyecto = $evaluacion->proyecto;
 
@@ -303,7 +319,6 @@ class EvaluacionesController extends Controller
 
         $totalAprobado = 0;
         for ($i = 0; $i < 9; $i++) {
-
             $numero = 'p_0' . strval($i);
             $totalAprobado = $totalAprobado + $evaluacion->$numero;
         }
@@ -317,9 +332,68 @@ class EvaluacionesController extends Controller
     {
         $ciclo = ciclos::latest()->first();
 
-        $temp = proyectos::with('evaluacion', 'ciclo')->where('ciclo_id', $ciclo->id)->get();
+        $temp = proyectos::with('evaluacion', 'ciclo')
+            ->where('ciclo_id', $ciclo->id)
+            ->get();
         $proyectos = $temp->where('dictamen', $tipo);
 
         return view('reportes.resultados', compact('proyectos', 'tipo'));
+    }
+
+    public function getPDF($data, $tipo)
+    {
+        $proyecto = proyectos::select('extenso', 'cronograma')->where('id', $data)->first();
+
+        if (strcmp('extenso', $tipo) == 0) {
+            $filename = 'proyecto.pdf';
+            $disk = Storage::disk('extenso')->get($proyecto->extenso);
+            return response()->make($disk, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            ]);
+        }
+
+        if (strcmp('cronograma', $tipo) == 0) {
+            $filename = 'cronograma.pdf';
+            $disk = Storage::disk('cronogramas')->get($proyecto->cronograma);
+            return response()->make($disk, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            ]);
+        }
+        if (strcmp('completo', $tipo) == 0) {
+            return redirect()->route('imprimirProyecto', $data);
+        }
+    }
+    public function cartas(Request $request)
+    {
+        $messages = [
+            'carta.between' => 'El archivo debe de pesar ente 1MB y 5MB',
+        ];
+        $request->validate(
+            [
+                'carta' => 'required|file|mimes:pdf|between:1,5120',
+            ],
+            $messages,
+        );
+
+        if ($request->hasfile('carta')) {
+            $anio = date('Y');
+            $archivo = $request->file('carta');
+            $nombre = \Str::lower(Auth::user()->name) . '.pdf';
+            $nombre = str_replace('/', '_', $nombre);
+            $nombre = str_replace(' ', '_', $nombre);
+            Storage::disk('cartas')->put($anio . '/' . $nombre, \File::get($archivo));
+            CartaConfidencialidad::updateOrCreate(
+                ['user_id' => Auth::user()->id, 'anio' => $anio],
+                [
+                    'name' => $nombre,
+                    'user_id' => Auth::user()->id,
+                    'anio' => $anio,
+                ],
+            );
+            Alert::success('Exito', 'Se ha subido su documento de manera satisfactoria');
+            return redirect()->route('home');
+        }
     }
 }

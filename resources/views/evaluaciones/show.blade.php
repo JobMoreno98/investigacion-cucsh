@@ -1,5 +1,14 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+@section('title', 'Asignar proyecto')
 
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">{{ __('Loading') }}</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+@endsection
 @section('content')
     <div class="container">
         <div class="row">
@@ -27,18 +36,22 @@
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
-                                    <th>Division</th>
+                                    <th>Correo</th>
+                                    <th>División</th>
                                     <th>Departamento</th>
                                     <th>Asignar</th>
                                 </tr>
                             </thead>
                             <tbody>
+
                                 @foreach ($evalaudores as $key => $item)
                                     <tr>
-                                        
+
                                         <td>{{ $item->name }} </td>
-                                        <td>{{ $item->departamento }}</td>
-                                        <td>{{ $item->division }}</td>
+                                        <td>{{ $item->email }}</td>
+                                        <td>{{ isset($item->division) ? $item->division : 'Dato no capturado' }}</td>
+                                        <td>{{ isset($item->departamento) ? $item->departamento : 'Dato no capturado' }}
+                                        </td>
                                         <td>
                                             <a class="btn btn-primary btn-sm"
                                                 href="{{ route('asignar_evaluador', [$proyecto, $item->id]) }}">
@@ -55,47 +68,9 @@
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function() {
-            $('#myTable').DataTable({
-                "order": [0, 'asc'],
-                responsive: true,
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "Primero",
-                        "sLast": "Último",
-                        "sNext": "Siguiente",
-                        "sPrevious": "Anterior"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                },
-                buttons: [
-                    'copy', 'excel',
-                    {
-                        extend: 'pdfHtml5',
-                        orientation: 'landscape',
-                        pageSize: 'LETTER',
-                    }
-
-                ]
-            });
-        });
-    </script>
+@endsection
+@section('js')
+    @include('layouts.scripts')
     <script>
         function asignar() {
             document.getElementById('form-asignar').submit();

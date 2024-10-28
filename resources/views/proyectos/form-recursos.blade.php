@@ -1,6 +1,6 @@
 <div class="row align-items-center">
     <h4>Recursos</h4>
-    <span class="text-muted">* NOTA: en caso de no solicitar recursos omitir este estacio</span>
+    <span class="text-muted ">* NOTA: en caso de no solicitar recursos omitir este estacio</span>
     <hr class="border border-dark border-1 opacity-50 mt-3">
     <div class="row col-md-6">
         <div class="col-md-12 pt-1 row justify-content-around align-items-center">
@@ -92,7 +92,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 mt-2 pt-2">
+        <div class="col-sm-12 mt-2 pt-2 text-justify">
             <label class="form-label" for="recursos">En caso de solicitar recursos favor de justificarlos tomando en
                 cuenta las normas
                 de austeridad de la Universidad de Guadalajara (máx: 2000 caracteres)</label>

@@ -1,19 +1,20 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">{{ __('Loading') }}</h4>
+@stop
 
+@section('css')
+    @include('layouts.head')
+@endsection
 @section('content')
     <div class="container">
-        
-        @if (Auth::user()->role == 'admin' || Auth::user()->s_role == 'admin')
-            @include('proyectos.reportes')
-        @endif
-
-
+        <h3 class="text-uppercase text-center py-4">mis proyectos</h3>
         <div class="row">
             <div class="col-sm-12">
-                <table class="table align-middle compact order-column" id="myTable">
+                <table class="display table-striped table-bordered" width="100%" id="myTable">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Folio</th>
                             <th>Título</th>
                             <th>Nombre</th>
@@ -26,8 +27,7 @@
                     <tbody>
                         @foreach ($proyectos as $item)
                             <tr>
-                                <td>{{ $item->id }}</td>
-                                <td>{{ $item->folio }}</td>
+                                <td>{{ $item->ciclo->anio . '/' . $item->folio }}</td>
                                 <td>{{ $item->titulo_proyecto }}</td>
                                 <td>{{ $item->user->name }}</td>
 
@@ -64,28 +64,28 @@
 
         </div>
     </div>
+
+@endsection
+@section('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.0.8/b-3.0.2/b-html5-3.0.2/datatables.min.js"></script>
+
     <script type="text/javascript">
         let tipo = "<?php echo isset($tipo) ? $tipo : ''; ?>";
         let valor = "<?php echo isset($valor) ? $valor : ''; ?>";
         $(document).ready(function() {
             var table = $('#myTable').DataTable({
                 "pageLength": 10,
-                columnDefs: [{
-                        target: 0,
+                columnDefs: [
+                    {
+                        target: 3,
                         visible: false,
                     },
                     {
                         target: 4,
                         visible: false,
-                    },
-                    {
-                        target: 5,
-                        visible: false,
-                    },
-                    {
-                        target: 6,
-                        visible: false,
-                    },
+                    }
                 ],
                 "language": {
                     "sProcessing": "Procesando...",
@@ -117,11 +117,17 @@
                 buttons: [{
                         extend: 'excelHtml5',
                         title: 'Proyectos de investigación',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5, 6]
+                        }
 
                     },
                     {
                         extend: 'pdfHtml5',
-                        title: 'Data export'
+                        title: 'Proyectos de investigación',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5, 6]
+                        }
                     }
                 ]
             })

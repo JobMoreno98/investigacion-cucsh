@@ -1,93 +1,127 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+@section('title', 'Editar Perfil')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">{{ __('Loading') }}</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+    <style>
+        #foto-perfil {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="container">
-        <div class="row justify-content-center mt-md-5">
-            @if ($errors->any())
-                <div class="alert alert-danger text-center">
-                    Debe de llenar los campos marcados con un asterisco (*).
-                </div>
-            @endif
-            @if (Session::has('message'))
-                <div class="col-sm-12 col-md-10">
-                    <div class="alert alert-success" role="alert">
-                        {{ Session::get('message') }}
-                    </div>
-                </div>
-            @endif
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">{{ __('Actualizar') }}</div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ route('update-user', $usuario->id) }}" enctype="multipart/form-data">
+                            @method('PUT')
+                            @csrf
+                            <div class="d-flex justify-content-center my-2">
+                                @php
+                                    if (isset($usuario->foto) && strcmp('', $usuario->foto) != 0) {
+                                        $url = asset('storage/fotos_perfil/' . $usuario->foto);
+                                    } else {
+                                        $url = asset('images/user-logo.png');
+                                    }
+                                @endphp
+                                <img id="foto-perfil" src="{{ $url }}" alt="">
+                            </div>
+                            <div class="form-group row">
+                                <label for="name"
+                                    class="col-md-4 col-form-label text-md-right">{{ __('Nombre') }}</label>
 
-            <div class="col-sm-12 col-md-10">
-                <form action="{{ route('usuario.update', $usuario->id) }}" class="row justify-content-center" method="post">
-                    @csrf
-                    <div class="col-sm-12  mt-2">
-                        <h4>Datos del usuario</h4>
-                        <hr class="mt-3 border border-dark border-1 opacity-50">
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <label for="" class="fw-bold">Nombre</label>
-                        <input type="text" class="form-control-plaintext" value="{{ $usuario->name }}">
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <label for="" class="fw-bold">Correo</label>
-                        <input type="text" class="form-control-plaintext" value="{{ $usuario->email }}">
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <label for="" class="fw-bold">División</label>
-                        <input type="text" class="form-control-plaintext"
-                            value="{{ isset($item->datos->division) ? $item->datos->division : 'Dato no registrado' }}">
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <label for="" class="fw-bold">Departamento</label>
-                        <input type="text" class="form-control-plaintext"
-                            value="{{ isset($item->datos->departamento) ? $item->datos->departamento : 'Dato no registrado' }}">
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <label for="" class="fw-bold form-label">Rol</label>
-                        <select name="rol" id="rol" class="form-control">
-                            <option {{ (strcmp($usuario->role, 'investigador') == 0)? 'selected' : '' }} value="investigador">
-                                Investigador</option>
-                            <option {{ (strcmp($usuario->role, 'evaluador') == 0) ? 'selected' : '' }} value="evaluador">
-                                Evaluador
-                            </option>
-                            <option {{ (strcmp($usuario->role, 'admin') == 0) ? 'selected' : '' }} value="admin">Admin
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <label for="" class="fw-bold form-label">Segundo rol</label>
-                        <select name="s_rol" id="s_rol" class="form-control">
-                            <option {{ $usuario->s_role == null ? 'selected' : '' }} value="ninguno">Ninguno</option>
-                            <option {{ strcmp($usuario->s_role, 'investigador') == 0 ? 'selected' : '' }}
-                                value="investigador">
-                                Investigador</option>
-                            <option {{ strcmp($usuario->s_role, 'evaluador') == 0 ? 'selected' : '' }} value="evaluador">
-                                Evaluador
-                            </option>
-                            <option {{ strcmp($usuario->s_role, 'admin') == 0 ? 'selected' : '' }} value="admin">Admin
-                            </option>
-                        </select>
-                    </div>
+                                <div class="col-md-6">
+                                    <input id="name" type="text"
+                                        class="form-control @error('name') is-invalid @enderror" name="name"
+                                        value="{{ $usuario->name }}" required autocomplete="name" autofocus>
+                                </div>
+                            </div>
 
-                    <div class="row justify-content-center">
-                        <div class="col-sm-12 col-md-3 mt-2">
-                            <button type="submit" class="btn btn-outline-success w-100">Guardar</button>
-                        </div>
-                    </div>
+                            <div class="form-group row">
+                                <label for="email"
+                                    class="col-md-4 col-form-label text-md-right">{{ __('Correo Electrónico') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="email" type="email"
+                                        class="form-control @error('email') is-invalid @enderror" name="email"
+                                        value="{{ $usuario->email }}" required autocomplete="email">
+                                </div>
+                            </div>
+                            @if (Auth::user()->hasRole('admin'))
+                                <div class="form-group row">
+                                    <label for="rol"
+                                        class="col-md-4 col-form-label text-md-right">{{ __('Rol') }}</label>
+
+                                    <div class="col-md-6">
+                                        <select class="form-control" id="rol" name="rol">
+                                            @foreach ($roles as $rol)
+                                                <option {{ $rol['selected'] }}>{{ $rol['name'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div class="form-group row">
+                                <label for="password"
+                                    class="col-md-4 col-form-label text-md-right">{{ __('Contraseña') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="password" type="password"
+                                        class="form-control @error('password') is-invalid @enderror" name="password"
+                                        autocomplete="new-password">
+
+                                    @error('password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="password-confirm"
+                                    class="col-md-4 col-form-label text-md-right">{{ __('Confirmar Contraseña') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="password-confirm" type="password" class="form-control"
+                                        name="password_confirmation" autocomplete="new-password">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label text-md-right" for="">Foto de perfil</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" type="file" name="foto" accept=".jpg,.jpeg,.png"
+                                        id="">
+                                </div>
+                            </div>
 
 
-                </form>
-                <div class="col-sm-12 mt-3">
-                    <h4>Cambio de contraseña</h4>
-                    <hr class="mt-3 border border-dark border-1 opacity-50">
-                    <a href=""></a>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-sm-12 col-md-4 mt-2">
-                        <a href="{{ route('password.resetear', $usuario->id) }}" class="btn btn-warning w-100">Click
-                            aquí para resetear la contraseña</a>
+                            <div class="form-group row mb-0">
+                                <div class="col-md-6 offset-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        {{ __('Actualizar') }}
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </form>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
+@endsection
+@section('js')
+    @include('layouts.scripts')
 @endsection

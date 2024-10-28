@@ -28,9 +28,14 @@
         <label class="form-label" for="tipo_registro">Tipo de registro</label>
         <select class="form-control" name="tipo_registro" id="tipo_registro" required
             value="{{ isset($proyecto->tipo_registro) ? $proyecto->tipo_registro : old('tipo_registro') }}">
-            <option disabled>Elegir una opción</option>
-            <option value="Proyecto nuevo">Proyecto nuevo</option>
-            <option value="Proyecto continuación">Proyecto continuación</option>
+            <option {{ !isset($proyecto->tipo_proyecto) ? 'selected' : '' }} disabled>Elegir una opción</option>
+
+            <option
+                {{ isset($proyecto->tipo_proyecto) ? (strcmp('Proyecto nuevo', $proyecto->tipo_proyecto) == 0 ? 'selected' : '') : '' }}
+                value="Proyecto nuevo">Proyecto nuevo</option>
+            <option
+                {{ isset($proyecto->tipo_proyecto) ? (strcmp('Proyecto continuación', $proyecto->tipo_proyecto) == 0 ? 'selected' : '') : '' }}
+                value="Proyecto continuación">Proyecto continuación</option>
         </select>
     </div>
 
@@ -121,17 +126,18 @@
     <div class="col-md-12 p-2">
         <label class="form-label" for="">En caso de recibir financiamiento especificar institución y
             monto</label>
-        <textarea class="form-control" name="otras_intituciones[]" id="">{{ isset($proyecto->tipo_proyecto) ? (strcmp($proyecto->otras_instituciones, 'No aplica') != 0 ? $proyecto->otras_instituciones : 'No aplica') : '' }}</textarea>
+        <textarea class="form-control" name="otras_intituciones[]" id="">{{ isset($proyecto->otras_intituciones) ? (strcmp($proyecto->otras_instituciones, 'No aplica') != 0 ? $proyecto->otras_instituciones : 'No aplica') : 'No aplica' }}</textarea>
     </div>
     <div class="col-sm-12 col-md-8 p-2">
         <label class="form-label" for="">Justificación</label>
-        <textarea class="form-control" name="justificacion" id="" readonly>{{ isset($proyecto->justificacion) ? $proyecto->justificacion : old('justificacion') }}</textarea>
+        <textarea class="form-control" placeholder="Justificación del proyecto" name="justificacion" id=""
+            readonly>{{ isset($proyecto->justificacion) ? $proyecto->justificacion : old('justificacion') }}</textarea>
     </div>
     <div class="col-md-4">
         <label class="form-label" for="anexos">Anexos</label>
-        <input accept=".pdf" class="form-control" type="file" name="anexos" required>
+        <input accept=".pdf" class="form-control" type="file" name="anexos">
 
         <label class="form-label" for="cronograma">Cronograma</label>
-        <input accept=".pdf" class="form-control" type="file" name="cronograma" required>
+        <input accept=".pdf" class="form-control" type="file" name="cronograma">
     </div>
 </div>

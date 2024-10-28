@@ -1,6 +1,15 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">{{ __('Loading') }}</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+@endsection
 @section('content')
-    <div class="container" onload="alerta()">
+    <div class="container-fluid">
         @if ($errors->any())
             <div class="alert alert-danger ">
                 @foreach ($errors->all() as $error)
@@ -9,49 +18,8 @@
             </div>
         @endif
         <div class="row justify-content-center">
-            <h3>Datos Generales</h3>
-            <hr>
             <form action="{{ route('proyectos.store') }}" method="post" class="row" enctype="multipart/form-data">
                 @csrf
-                <div class="row p-2 m-1 justify-content-center">
-                    <div class="col-sm-12 col-md-6">
-                        Nombre responsable :<br> {{ $user->name }}
-                    </div>
-                    <div class="col-sm-12 col-md-4">
-                        Correo :<br> {{ $user->email }}
-                    </div>
-                    <div class="col-sm-12 col-md-2">
-                        Año : {{ $ciclo->anio }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Nombramiento :<br> {{ $user->datos->nombramiento }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Cuerpo Academico :<br> {{ $user->datos->cuerpo_academico }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento S.N.I :<br> {{ $user->datos->reconocimiento_sni }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento PROMEP :<br> {{ $user->datos->reconocimiento_promep }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento PROESDE :<br> {{ $user->datos->reconocimiento_proesde }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        División :<br> {{ $user->datos->division }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Departamento :<br> {{ $user->datos->departamento }}
-                    </div>
-
-
-                </div>
-
-                <hr>
                 @include('proyectos.resumen')
 
                 @include('proyectos.metodologia')
@@ -213,20 +181,25 @@
 
                 @include('proyectos.form-recursos')
                 <div class="row mt-3 justify-content-center">
-                    <h3>Archivos</h3>
-                    <span class="text-muted">* NOTA 1: subir sus archivos en formato PDF.</span> <br>
-                    <span class="text-muted">* NOTA 2: anexar el documento en extenso con mínimo 10 cuartillas con formato APA 7.</span>
-                    <span class="text-muted">* NOTA 3: en caso de ser proyecto de continuidad debera entregar el informe de resultados.</span>
-                    <hr class="mt-3">
-                    <div class="col-md-4">
-                        <label class="form-label" for="anexos">Proyecto en extenso</label>
-                        <input accept=".pdf" class="form-control" type="file" name="anexos" required>
+                    <div class="col-md-6">
+                        <h3>Archivos</h3>
+                        <span class="text-muted">* NOTA 1: subir sus archivos en formato PDF.</span> <br>
+                        <span class="text-muted">* NOTA 2: anexar el documento en extenso con mínimo 10 cuartillas con
+                            formato APA 7.</span> <br>
+                        <span class="text-muted">* NOTA 3: en caso de ser proyecto de continuidad debera entregar el
+                            informe de resultados.</span> <br>
+                        <span class="text-muted">* NOTA 4: favor de no incluir sus nombres en los archivos que se
+                            suban.</span>
+                        <hr class="mt-3">
                     </div>
+
                     <div class="col-md-4">
+                        <label class="form-label" for="extenso">Proyecto en extenso</label>
+                        <input accept=".pdf" class="form-control" type="file" name="extenso" required>
                         <label class="form-label" for="resultados">Informe de resultados</label>
                         <input accept=".pdf" class="form-control" type="file" name="resultados" required>
                     </div>
-                    
+
                 </div>
 
                 <div class="row mt-3 justify-content-center">

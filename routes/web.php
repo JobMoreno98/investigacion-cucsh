@@ -1,11 +1,16 @@
 <?php
 
+use App\Http\Controllers\CartaConfidencialidadController;
 use App\Http\Controllers\CiclosController;
 use App\Http\Controllers\EvaluacionesController;
 use App\Http\Controllers\ProyectosController;
 use App\Http\Controllers\User;
+use App\Http\Controllers\ModulosController;
+use App\Http\Controllers\RolesController;
+use App\Http\Controllers\PermisosController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,9 +23,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
 Auth::routes();
+Route::resource('modulos', ModulosController::class)->middleware(['auth', 'admin']);
+Route::resource('roles', RolesController::class)->middleware(['auth', 'admin']);
+Route::resource('permisos', PermisosController::class)->middleware(['auth', 'admin']);
+Route::PUT('/user-update/{id}', [User::class, 'update_user'])
+    ->name('update-user')
+    ->middleware(['auth']);
+
+Route::get('asignar-permisos/{id}', [
+    'as' => 'asignar_permisos',
+    'middleware' => 'auth',
+    'uses' => 'App\Http\Controllers\RolesController@relacionar',
+]);
+
+Route::post('guardar-relacion-permisos/{id}', [
+    'as' => 'guardar_relacion_permisos',
+    'middleware' => 'auth',
+    'uses' => 'App\Http\Controllers\RolesController@guardarRelacion',
+]);
 
 Route::resource('usuarios', User::class)
     ->names('usuarios')
@@ -32,24 +53,25 @@ Route::resource('ciclos', CiclosController::class)
 
 Route::resource('evaluaciones', EvaluacionesController::class)
     ->names('evaluaciones')
-    ->middleware('auth','admin');
+    ->middleware('auth', 'admin');
 
 Route::resource('proyectos', ProyectosController::class)
     ->names('proyectos')
     ->middleware('auth');
 
-
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/datos-generales', [User::class, 'datos_generales'])->name('datos_generales');
+Route::get('/datos-generales', [User::class, 'datos_generales'])
+    ->name('datos_generales')
+    ->middleware('auth');
 
-Route::get('/usuario/{id}/edit', [User::class, 'role'])
+Route::get('/usuario/{id}/edit', [User::class, 'edit'])
     ->name('usuario.edit')
-    ->middleware('auth', 'admin');
+    ->middleware('auth');
 
 Route::post('/usuario-update/{id}', [User::class, 'usuario_update'])
     ->name('usuario.update')
-    ->middleware('auth', 'admin');
+    ->middleware('auth');
 
 Route::get('/ciclo/{id}/cerrar', [CiclosController::class, 'cerrar'])
     ->name('cerrar-ciclo')
@@ -77,7 +99,7 @@ Route::get('/proyectosAll', [ProyectosController::class, 'all'])
 
 Route::get('/estadisticas', [ProyectosController::class, 'estadisticas'])
     ->name('proyectos.estadisticas')
-    ->middleware('auth','admin');
+    ->middleware('auth', 'admin');
 
 Route::get('/resetear-passord/{id}', [User::class, 'password'])
     ->name('password.resetear')
@@ -108,33 +130,58 @@ Route::get('/asinar-evaludor/{proyecto}/{user}', [EvaluacionesController::class,
 
 Route::get('/asginados', [EvaluacionesController::class, 'proyectos_asigandos'])
     ->name('asigandos')
-    ->middleware('auth', 'admin');
+    ->middleware('auth');
 
 Route::get('/evaluar-proyecto/{proyecto}', [EvaluacionesController::class, 'evaluar_proyecto'])
     ->name('crear-evaluacion')
     ->middleware('auth', 'admin');
 
-    Route::get('/evaluar-proyecto-continuacion/{proyecto}', [EvaluacionesController::class, 'evaluar_continuacion'])
+Route::get('/evaluar-proyecto-continuacion/{proyecto}', [EvaluacionesController::class, 'evaluar_continuacion'])
     ->name('evaluaciones.continuacion')
     ->middleware('auth', 'admin');
 
-    
-    
 /**
  *
  * Reportes de excel
  */
 /**
  * Evalauciones definitivas
-*/
-Route::get('/evaluacion-definitiva/{id}', [EvaluacionesController::class, 'definitivo'])->name('evaluacion.definitiva')->middleware('auth', 'admin');
+ */
+Route::get('/evaluacion-definitiva/{id}', [EvaluacionesController::class, 'definitivo'])
+    ->name('evaluacion.definitiva')
+    ->middleware('auth', 'admin');
 
 /**
- * 
+ *
  * Reportes en PDF
  */
 
- Route::get('/imprimir-evaluacion/{id}',[EvaluacionesController::class, 'imprimirEvaluacion'])->name('imprimirEvalaucion')->middleware('auth','admin');
+Route::get('/imprimir-evaluacion/{id}', [EvaluacionesController::class, 'imprimirEvaluacion'])
+    ->name('imprimirEvalaucion')
+    ->middleware('auth', 'admin');
 
+Route::get('/resultados-evaluaciones/{tipo}', [EvaluacionesController::class, 'resultadosEvaluaciones'])->name('resultadosEvaluaciones');
 
-Route::get('/resultados-evaluaciones/{tipo}',[EvaluacionesController::class, 'resultadosEvaluaciones'])->name('resultadosEvaluaciones');
+//Route::get('/all-reset-passwords', [User::class, 'all_resets_passwords']);
+
+Route::get('local/file/{id}/{tipo}', [EvaluacionesController::class, 'getPDF'])->name('local.temp');
+
+Route::post('/carta-confidecnialidad', [EvaluacionesController::class, 'cartas'])
+    ->name('carta.confidencialidad')
+    ->middleware('auth');
+
+Route::resource('cartas-confidencialidad', CartaConfidencialidadController::class)->middleware('auth', 'admin');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::post('/eliminar-enlace', [ModulosController::class, 'eliminar_enlace'])
+    ->name('eliminar.enlace')
+    ->middleware(['auth:sanctum', 'auth', 'admin']);
+
+Route::post('/activar-enlace', [ModulosController::class, 'activar_enlace'])
+    ->name('activar.enlace')
+    ->middleware(['auth:sanctum', 'auth', 'admin']);
+
+Route::get('/crear-tabla', [App\Http\Controllers\HomeController::class, 'tabla']);

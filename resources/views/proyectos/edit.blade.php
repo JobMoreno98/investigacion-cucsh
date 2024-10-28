@@ -1,4 +1,12 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">{{ __('Loading') }}</h4>
+@stop
+
+@section('css')
+    @include('layouts.head')
+@endsection
 
 @section('content')
     <div class="container">
@@ -11,51 +19,11 @@
                 </ul>
             </div>
         @endif
-        <div class="row">
-            <h3>Datos Generales</h3>
-            <hr>
-            <form action="{{ route('proyectos.update', $proyecto->id) }}" method="post" class="row"
+        <div class="row justify-content-center">
+            <form action="{{ route('proyectos.update', $proyecto->id) }}" method="post" class="row  justify-content-center"
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <div class="row p-2 m-1 justify-content-center">
-                    <div class="col-sm-12 col-md-6">
-                        Nombre responsable :<br> {{ $proyecto->user->name }}
-                    </div>
-                    <div class="col-sm-12 col-md-4">
-                        Correo :<br> {{ $proyecto->user->email }}
-                    </div>
-                    <div class="col-sm-12 col-md-2">
-                        Año : {{ $proyecto->ciclo->anio }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Nombramiento :<br> {{ $proyecto->user->datos->nombramiento }}
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        Cuerpo Academico :<br> {{ $proyecto->user->datos->cuerpo_academico }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento S.N.I :<br> {{ $proyecto->user->datos->reconocimiento_sni }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento PROMEP :<br> {{ $proyecto->user->datos->reconocimiento_promep }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-4">
-                        Reconocimiento PROESDE :<br> {{ $proyecto->user->datos->reconocimiento_proesde }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-6">
-                        Departamento :<br> {{ $proyecto->user->datos->departamento }}
-                    </div>
-
-                    <div class="col-sm-12 col-md-6">
-                        División :<br> {{ $proyecto->user->datos->division }}
-                    </div>
-                </div>
-                <hr>
                 @include('proyectos.resumen')
 
                 @include('proyectos.metodologia')
@@ -179,7 +147,7 @@
                         <div>
                             <label for="" class="form-label">En caso afirmativo favor de mencionar los nombres de
                                 los Cuerpos Académicos con los que se vincula</label>
-                            <textarea class="form-control" name="vinculacion_cuerpos[]" placeholder="Cuerpos Académicos" id="">{{ old('vinculacion_cuerpos.1') ? old('vinculacion_cuerpos.1') : 'No aplica' }}</textarea>
+                            <textarea class="form-control" name="vinculacion_cuerpos[]" placeholder="Cuerpos Académicos" id="">{{ $proyecto->vinculacion_ca ? $proyecto->vinculacion_ca : 'No aplica' }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -239,18 +207,23 @@
                 </div>
                 @include('proyectos.form-recursos')
                 <div class="row mt-3 justify-content-center">
-                    <h3>Archivos</h3>
-                    <span class="text-muted">* NOTA 1: subir sus archivos en formato PDF</span> <br>
-                    <span class="text-muted">* NOTA 2: los archivos solamente se suben una vez, en caso de realizar
-                        algun cambio debe de llevar el mismo nombre que el anteriror</span>
-                    <hr class="mt-3">
-                    <div class="col-md-4">
-                        <label class="form-label" for="anexos">Proyecto en extenso</label>
-                        <input accept=".pdf" class="form-control" type="file" name="anexos">
+                    <div class="col-sm-12 col-md-8">
+                        <h3>Archivos</h3>
+                        <span class="text-muted">* NOTA 1: subir sus archivos en formato PDF.</span> <br>
+                        <span class="text-muted">* NOTA 2: anexar el documento en extenso con mínimo 10 cuartillas con
+                            formato APA 7.</span> <br>
+                        <span class="text-muted">* NOTA 3: en caso de ser proyecto de continuidad debera entregar el
+                            informe de resultados.</span> <br>
+                        <span class="text-muted">* NOTA 4: favor de no incluir sus nombres en los archivos que se
+                            suban.</span>
+                        <hr class="mt-3">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label" for="cronograma">Cronograma</label>
-                        <input accept=".pdf" class="form-control" type="file" name="cronograma">
+
+                    <div class="col-sm-12 col-md-4">
+                        <label class="form-label" for="extenso">Proyecto en extenso</label>
+                        <input accept=".pdf" class="form-control" type="file" name="extenso">
+                        <label class="form-label" for="resultados">Informe de resultados</label>
+                        <input accept=".pdf" class="form-control" type="file" name="resultados">
                     </div>
 
                 </div>
@@ -304,6 +277,7 @@
 @endsection
 
 @section('js')
+    @include('layouts.scripts')
     @include('sweetalert::alert')
     <script src="{{ asset('js/addSelect.js') }}"></script>
 @endsection

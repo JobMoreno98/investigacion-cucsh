@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ciclos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Modulos;
+use App\Models\EnlaceModulo;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -22,9 +26,12 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $ciclo = ciclos::where('activo',1)->first();
-        return view('home',compact('ciclo'));
+        $user = Auth::user();
+        $permissionNames = $user->getPermissionsViaRoles();
+        $modulos = DB::table('modulos_enlace')->whereIn('enlace_permiso', $permissionNames->pluck('name')->toArray())->get()->groupBy('modulo_nombre');
+        //return ($modulos);
+        return view('home', compact('modulos'));
     }
 }
